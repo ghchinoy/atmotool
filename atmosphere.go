@@ -189,6 +189,7 @@ func zipTheseFiles(filesList []string, filename string) {
 
 }
 
+// creates a list of file paths suitable for zipping
 func listFilesInDir(path string, relpath string, exclusions []string, debug bool) []string {
 
 	if debug {
@@ -227,14 +228,27 @@ func listFilesInDir(path string, relpath string, exclusions []string, debug bool
 	return fileList
 }
 
+// Convenience method
 func uploadLessFile(lessFilePath string, config Configuration) {
 	fmt.Printf("Uploading Less file %s to %s\n", lessFilePath, config.Url)
+	// upload to CMS path ??
+	// call rebuild styles API
+
 }
 
+// Convenience method
 func uploadAllHelper(dir string, config Configuration) {
 	fmt.Printf("Uploading all in %s to %s\n", dir, config.Url)
+	// upload PREFIX_resourcesThemeDefault.zip to CMS /resources/theme/default
+	// upload PREFIX_contentHomeLanding.zip to CMS /content/home/landing
+	// upload less file to CMS ??
+	// call rebuild styles API
+
 }
 
+// basic upload to CMS
 func upload(files []string, config Configuration, path string) {
 	fmt.Printf("Uploading to %s cms location %s these: %s\n", config.Url, path, files)
+	// upload FILE to CMS path PATH
+	// iterate through []FILE
 }
