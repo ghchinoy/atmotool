@@ -15,7 +15,7 @@ Requires a config file (typically called environment`.config`, ex. `local.config
 ```
 {
 	"url": "http://local.cm.demo:9900/atmosphere",
-	"username": "administrator@cm.demo",
+	"email": "administrator@cm.demo",
 	"password": "password"
 }
 ```
