@@ -116,7 +116,8 @@ Options:
 		if dir == "." {
 			fn = "this"
 		} else {
-			fn = strings.Replace(dir, "/", "-", -1)
+			fn = strings.Replace(dir, ".", "", -1)
+			fn = strings.Replace(fn, "/", "-", -1)
 		}
 		fn = prefix + "_" + fn + ".zip"
 		fmt.Printf("Zipping %s as %s...\n", dir, fn)
