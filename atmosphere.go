@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -46,10 +45,9 @@ func main() {
 	usage := `Akana Community Manager Helper Tool.
 
 Usage:
-  atmosphere zip --prefix <prefix> [--dir <dir>] --config <config>
-  atmosphere upload less <file> --config <config>
-  atmosphere upload file --path <path> --config <config> <files>...
-  atmosphere upload all --config <config> [--dir <dir>]
+  atmosphere zip --prefix <prefix> [--dir <dir>]
+  atmosphere upload less <file> [--config <config>]
+  atmosphere upload file --path <path> <files>... [--config <config>]
   atmosphere -h | --help
   atmosphere --version
 
@@ -58,7 +56,10 @@ Options:
   --version  Show version and exit.
   --dir=<dir>  Directory. [default: .]
   --path=<cms_path>  CM CMS path.
+  --config=<config_file> Configuration file [default: local.conf]
 `
+	//   atmosphere upload all --config <config> [--dir <dir>]
+
 	arguments, _ := docopt.Parse(usage, nil, true, "1.0 cirrus", false)
 
 	// Debug for command-line args
@@ -74,26 +75,15 @@ Options:
 		}
 	*/
 
-	configLocation, _ := arguments["<config>"].(string)
-	configBytes, err := ioutil.ReadFile(configLocation)
-	if err != nil {
-		fmt.Printf("Error opening config file %s\n", err)
-		flag.Usage()
-		os.Exit(1)
-	}
-	//var config Configuration
-	err = json.Unmarshal(configBytes, &config)
-	if err != nil {
-		fmt.Printf("Unable to parse configuration file. %s\n", err)
-		os.Exit(1)
-	}
-
-	if len(config.Password) < 1 {
-		fmt.Printf("Missing or blank password.")
-		os.Exit(1)
-	}
-
 	if arguments["upload"] == true {
+
+		configLocation, _ := arguments["<config>"].(string)
+		err := initializeConfiguration(configLocation)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
 		if arguments["less"] == true {
 			uploadFilePath := arguments["<file>"].(string)
 			uploadLessFile(uploadFilePath, config)
@@ -124,6 +114,37 @@ Options:
 
 		zip.ZipFolder(dir, fn)
 	}
+}
+
+func initializeConfiguration(configLocation string) error {
+
+	if configLocation == "" || configLocation == "<nil>" {
+		cwd, err := os.Getwd()
+		if err != nil {
+			fmt.Println("Cant't get working directory,")
+			return err
+		}
+		configLocation = cwd + "/local.conf"
+	}
+
+	configBytes, err := ioutil.ReadFile(configLocation)
+	if err != nil {
+		fmt.Printf("Error opening config file: %s\n", err)
+		return err
+	}
+	//var config Configuration
+	err = json.Unmarshal(configBytes, &config)
+	if err != nil {
+		fmt.Printf("Unable to parse configuration file: %s\n", err)
+		return err
+	}
+
+	if len(config.Password) < 1 {
+		fmt.Printf("Missing or blank password.")
+		return err
+	}
+
+	return nil
 }
 
 // Convenience method
