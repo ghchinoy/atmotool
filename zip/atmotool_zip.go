@@ -4,12 +4,115 @@ import (
 	"archive/zip"
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 )
+
+const (
+	singleFileByteLimit = 107374182400 // 1 GB
+	chunkSize           = 4096         // 4 KB
+)
+
+// filepath WalkFunc doesn't allow custom params
+// This struct will help
+type zipper struct {
+	srcFolder string
+	destFile  string
+	writer    *zip.Writer
+}
+
+func copyContents(r io.Reader, w io.Writer) error {
+	var size int64
+	b := make([]byte, chunkSize)
+	for {
+		// check for large file size
+		size += chunkSize
+		if size > singleFileByteLimit {
+			return errors.New("File too large to zip in this tool.")
+		}
+		// read into memory
+		length, err := r.Read(b[:cap(b)])
+		if err != nil {
+			if err != io.EOF {
+				return err
+			}
+			if length == 0 {
+				break
+			}
+		}
+		// write chunk to zip
+		_, err = w.Write(b[:length])
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// internal zip file, called by filepath.Walk on each file
+func (z *zipper) zipFile(path string, f os.FileInfo, err error) error {
+	if err != nil {
+		return err
+	}
+	// only zip files, since dirs are created by files inside them
+	if !f.Mode().IsRegular() || f.Size() == 0 {
+		return nil
+	}
+	// open file
+	file, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	// new file in zip
+	fileName := strings.TrimPrefix(path, z.srcFolder+"/")
+	w, err := z.writer.Create(fileName)
+	if err != nil {
+		return err
+	}
+	// copy contents to zip writer
+	err = copyContents(file, w)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (z *zipper) zipFolder() error {
+	// create zip file
+	zipFile, err := os.Create(z.destFile)
+	if err != nil {
+		return err
+	}
+	defer zipFile.Close()
+	// zip writer
+	z.writer = zip.NewWriter(zipFile)
+	err = filepath.Walk(z.srcFolder, z.zipFile)
+	if err != nil {
+		return nil
+	}
+	// close zip file
+	err = z.writer.Close()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// zips given folder to file named
+func ZipFolder(srcFolder string, destFile string) error {
+	z := &zipper{
+		srcFolder: srcFolder,
+		destFile:  destFile,
+	}
+	return z.zipFolder()
+}
 
 func ZipPredefinedPath(prefix string, dir string) {
 	//fmt.Printf("Zipping '%s' with prefix '%s'\n", dir, prefix)
@@ -20,7 +123,7 @@ func ZipPredefinedPath(prefix string, dir string) {
 
 	resources_src, err := os.Stat(resources_dir)
 	if err != nil {
-		fmt.Printf("Error with resource dir ", err)
+		fmt.Print("Error with resource dir ", err)
 		os.Exit(1)
 	}
 	if !resources_src.IsDir() {
@@ -29,7 +132,7 @@ func ZipPredefinedPath(prefix string, dir string) {
 
 	content_src, err := os.Stat(content_dir)
 	if err != nil {
-		fmt.Printf("Error with content dir ", err)
+		fmt.Print("Error with content dir ", err)
 		os.Exit(1)
 	}
 	if !content_src.IsDir() {
