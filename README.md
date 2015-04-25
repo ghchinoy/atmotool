@@ -26,36 +26,40 @@ Note, no CM context (ex. `/atmosphere` or `/enterpriseapi`).
 
 ### Upload Less file
 
-    atmotool upload less <file> --config <config>
+    atmotool upload less <file> [--config <config>]
 
-Will upload a `.less` file to Community Manager. Automatically names less file `custom.less` when uploading.
+Will upload a `.less` file to Community Manager using the specified config file. Automatically names less file `custom.less` when uploading.
+
+The config file is optional, will default to looking for `local.conf` in the current directory.
 
 ### Upload to CM CMS
 
 Uploads to CM's CMS, allowing user to specify file name and path.
 
-    atmotool upload file --path <path> --config <config> <files>...
+    atmotool upload file --path <path> <files>... [--config <config>]
 
 Note, that if the filename ends in `.zip`, zip expansion will occur at the target path.
 
+The config file is optional, will default to looking for `local.conf` in the current directory.
+
+
 Example usage of uploading customization zipfile to `/content/home/landing`
 
-    atmotool upload file --path /content/home/landing --config local.conf prospect_contentHomeLanding.zip
+    atmotool upload file --path /content/home/landing prospect_contentHomeLanding.zip
 
 
 ### Build zipfiles
 
 Builds zipfiles, suitable for uploading to Community Manager
 
-    atmotool zip --prefix <prefix> [--dir <dir>] --config <config>
+    atmotool zip --prefix <prefix> [--dir <dir>]
 
 * prefix: Prefix for zip to be created, PREFIX_resourcesThemeDefault.zip will be generated
-* config: Config file, see above
 * dir: base directory of the CM customization files, defaults to the current directory
 
 Example usage creating a single zipfile
 
-    atmotool zip --prefix TEST --dir ./resources/theme/default --config ./testdata/local.conf
+    atmotool zip --prefix TEST --dir ./resources/theme/default
 
 Output would be, in the current working directory:
 
