@@ -1,11 +1,11 @@
-# SOA Software Community Manager Customizer
+# Akana Community Manager Customizer
 
-A tool to customize SOA Software's Community Manager.
+A tool to customize Akana's Community Manager.
 
 
 ## Installation
 
-Clone git repo to `$GOPATH/src/bitbucket.org/ghchinoy` then `cd atmotool`
+Clone git repo to `$GOPATH/src/bitbucket.org/apihussain` then `cd atmotool`
 
     go get github.com/docopt/docopt-go
     go install
