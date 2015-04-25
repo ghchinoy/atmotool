@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"bytes"
 
@@ -32,12 +33,16 @@ type Auth struct {
 	Password string `json:"password"`
 }
 
-var config Configuration
-var client *http.Client
+const LESS_URI = "/resources/theme/default/less?unpack=false"
+
+var (
+	config Configuration
+	client *http.Client
+)
 
 func main() {
 
-	usage := `SOA Software Community Manager Helper Tool.
+	usage := `Akana Community Manager Helper Tool.
 
 Usage:
   atmosphere zip --prefix <prefix> --config <config> [--dir <dir>]
@@ -89,8 +94,8 @@ Options:
 
 	if arguments["upload"] == true {
 		if arguments["less"] == true {
-			lessFilePath := arguments["<file>"].(string)
-			uploadLessFile(lessFilePath, config)
+			uploadFilePath := arguments["<file>"].(string)
+			uploadLessFile(uploadFilePath, config)
 		} else if arguments["all"] == true {
 			dir, _ := arguments["--dir"].(string)
 			uploadAllHelper(dir, config)
@@ -110,8 +115,8 @@ Options:
 }
 
 // Convenience method
-func uploadLessFile(lessFilePath string, config Configuration) {
-	log.Printf("Uploading Less file %s to %s\n", lessFilePath, config.Url)
+func uploadLessFile(uploadFilePath string, config Configuration) {
+	log.Printf("Uploading Less file %s to %s\n", uploadFilePath, config.Url)
 
 	err := loginToCM()
 	if err != nil {
@@ -119,23 +124,47 @@ func uploadLessFile(lessFilePath string, config Configuration) {
 		return
 	}
 
-	//
 	// Upload
 	log.Println("Uploading custom.less ...")
 	extraParams := map[string]string{
 		"none": "really",
 	}
-	lessUploadUri := config.Url + "/resources/theme/default/less?unpack=false"
+	uploadUri := config.Url + LESS_URI
+
+	statusCode, err := uploadFile(uploadFilePath, extraParams, uploadUri)
+	if err != nil {
+		log.Fatalf("Issues. %v : %s", statusCode, err)
+	}
+
+	log.Printf("Upload status %v", statusCode)
+
+	if statusCode == 200 {
+		err = rebuildStyles("default")
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}
+
+}
+
+func uploadFile(uploadFilePath string, extras map[string]string, uploadUri string) (int, error) {
+
+	var uploadStatus int
+
+	//uploadUri := config.Url + LESS_URI
+
 	var request *http.Request
-	request, err = newFileUploadRequest(lessUploadUri, extraParams, "File", lessFilePath)
+	request, err := newFileUploadRequest(uploadUri, extras, "File", uploadFilePath)
 	if err != nil {
 		log.Fatalln(err)
+		return uploadStatus, err
 	}
 	request.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
 
 	resp, err := client.Do(request)
 	if err != nil {
 		log.Fatal(err)
+		return uploadStatus, err
 	} else {
 		body := &bytes.Buffer{}
 		_, err := body.ReadFrom(resp.Body)
@@ -143,16 +172,12 @@ func uploadLessFile(lessFilePath string, config Configuration) {
 			log.Fatalln(err)
 		}
 		resp.Body.Close()
-		log.Printf("Upload status %v", resp.StatusCode)
-	}
 
-	if resp.StatusCode == 200 {
-		err = rebuildStyles("default")
-		if err != nil {
-			log.Fatalln(err)
-		}
-	}
+		uploadStatus = resp.StatusCode
 
+		//log.Printf("Upload status %v", resp.StatusCode)
+	}
+	return uploadStatus, nil
 }
 
 func loginToCM() error {
@@ -220,7 +245,6 @@ func newFileUploadRequest(uri string, params map[string]string, paramName string
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	//writer.SetBoundary("WebKitFormBoundaryoa9Fs4QksdotlWrl")
 
 	part, err := writer.CreateFormFile(paramName, filepath.Base(path))
 	if err != nil {
@@ -265,4 +289,30 @@ func upload(files []string, config Configuration, path string) {
 	fmt.Printf("Uploading to %s cms location %s these: %s\n", config.Url, path, files)
 	// upload FILE to CMS path PATH
 	// iterate through []FILE
+
+	err := loginToCM()
+	if err != nil {
+		log.Fatalln(err)
+		return
+	}
+
+	uploadUri := config.Url + path
+
+	extraParams := map[string]string{
+		"none": "really",
+	}
+
+	for _, v := range files {
+		log.Printf("Uploading %s ...\n", v)
+		if strings.HasSuffix(v, ".zip") {
+			uploadUri += "?unpack=true"
+		}
+		log.Println(uploadUri)
+		statusCode, err := uploadFile(v, extraParams, uploadUri)
+		if err != nil {
+			log.Fatalf("Issues. %v : %s", statusCode, err)
+		}
+		log.Printf("Upload status %v", statusCode)
+	}
+
 }
