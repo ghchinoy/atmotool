@@ -10,17 +10,19 @@ Clone git repo to `$GOPATH/src/bitbucket.org/apihussain` then `cd atmotool`
     go get github.com/docopt/docopt-go
     go install
 
-Requires a config file (typically called environment`.config`, ex. `local.config` or `eap.config`) that contains CM url, username, and password, in JSON format:
+Requires a config file (typically called _environment_`.config`, ex. `local.config` or `eap.config`) that contains CM url, username, and password, in JSON format:
 
 ```
 {
-	"url": "http://local.cm.demo:9900/atmosphere",
+	"url": "http://local.cm.demo:9900",
 	"email": "administrator@cm.demo",
 	"password": "password"
 }
 ```
 
-## Capabilities - Working
+Note, no CM context (ex. `/atmosphere` or `/enterpriseapi`).
+
+## Capabilities - _Working_
 
 ### Upload Less file
 
@@ -43,8 +45,6 @@ Example usage of uploading customization zipfile to `/content/home/landing`
 
 ### Build zipfiles
 
-### Build zipfiles
-
 Builds zipfiles, suitable for uploading to Community Manager
 
     atmotool zip --prefix <prefix> [--dir <dir>] --config <config>
@@ -62,7 +62,7 @@ Output would be, in the current working directory:
     TEST_-resources-theme-default.zip
 
 
-## Capabilities - Planned
+## Capabilities - _Planned_
 
 
 ### Build zipfiles
@@ -87,7 +87,7 @@ Outputs would be, in the current working directory:
 
 ### Upload customizations to CM
 
-Looks for and uploads `custom.less`, `PREFIX_resourcesThemDefault.zip`, `PREFIX_contentHomeLanding.zip` to Community Manager located at `ATMO_BASE_URL`
+Looks for and uploads `custom.less`, `PREFIX_resourcesThemeDefault.zip`, `PREFIX_contentHomeLanding.zip` to Community Manager located at `ATMO_BASE_URL`
 
     atmotool upload all --config <config> [--dir <dir>]
 
