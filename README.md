@@ -103,6 +103,18 @@ Looks for and uploads `custom.less`, `PREFIX_resourcesThemeDefault.zip`, `PREFIX
 
 ## Development
 
+### 1.0.2
+
+* `config` flag made optional
+
+### 1.0.1
+
+* uploads files
+
+### 1.0.0
+
+* uploads less
+
 ### Notes
 
 Using `docopt.org` for command line argument processing

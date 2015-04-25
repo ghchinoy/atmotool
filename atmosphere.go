@@ -60,7 +60,7 @@ Options:
 `
 	//   atmosphere upload all --config <config> [--dir <dir>]
 
-	arguments, _ := docopt.Parse(usage, nil, true, "1.0 cirrus", false)
+	arguments, _ := docopt.Parse(usage, nil, true, "1.0.2 cirrus", false)
 
 	// Debug for command-line args
 	/*
@@ -76,7 +76,6 @@ Options:
 	*/
 
 	if arguments["upload"] == true {
-
 		configLocation, _ := arguments["<config>"].(string)
 		err := initializeConfiguration(configLocation)
 		if err != nil {
@@ -240,7 +239,9 @@ func loginToCM() error {
 		log.Fatalln(err)
 		return err
 	}
-	log.Printf("Login %s", resp.Status)
+	if resp.StatusCode != 200 {
+		log.Printf("Login %s", resp.Status)
+	}
 
 	return nil
 
@@ -340,7 +341,7 @@ func upload(files []string, config Configuration, path string) {
 		if strings.HasSuffix(v, ".zip") {
 			uploadUri += "?unpack=true"
 		}
-		log.Println(uploadUri)
+		//log.Println(uploadUri)
 		statusCode, err := uploadFile(v, extraParams, uploadUri)
 		if err != nil {
 			log.Fatalf("Issues. %v : %s", statusCode, err)
