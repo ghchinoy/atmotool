@@ -15,9 +15,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"bitbucket.org/apihussain/atmotool/zip"
+
 	"bytes"
 
-	"bitbucket.org/ghchinoy/atmotool/zip"
 	"github.com/docopt/docopt-go"
 )
 
@@ -45,7 +46,7 @@ func main() {
 	usage := `Akana Community Manager Helper Tool.
 
 Usage:
-  atmosphere zip --prefix <prefix> --config <config> [--dir <dir>]
+  atmosphere zip --prefix <prefix> [--dir <dir>] --config <config>
   atmosphere upload less <file> --config <config>
   atmosphere upload file --path <path> --config <config> <files>...
   atmosphere upload all --config <config> [--dir <dir>]
@@ -110,7 +111,17 @@ Options:
 	} else if arguments["zip"] == true {
 		prefix, _ := arguments["<prefix>"].(string)
 		dir, _ := arguments["--dir"].(string)
-		zip.ZipPredefinedPath(prefix, dir)
+		//zip.ZipPredefinedPath(prefix, dir)
+		var fn string
+		if dir == "." {
+			fn = "this"
+		} else {
+			fn = strings.Replace(dir, "/", "-", -1)
+		}
+		fn = prefix + "_" + fn + ".zip"
+		fmt.Printf("Zipping %s as %s...\n", dir, fn)
+
+		zip.ZipFolder(dir, fn)
 	}
 }
 
