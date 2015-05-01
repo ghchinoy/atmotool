@@ -56,7 +56,7 @@ Options:
   --version  Show version and exit.
   --dir=<dir>  Directory. [default: .]
   --path=<cms_path>  CM CMS path.
-  --config=<config_file> Configuration file [default: local.conf]
+  --config=<config> Configuration file [default: local.conf]
 `
 	//   atmosphere upload all --config <config> [--dir <dir>]
 
@@ -68,7 +68,7 @@ Options:
 		for k := range arguments {
 			keys = append(keys, k)
 		}
-		sort.Strings(keys)
+		//sort.Strings(keys)
 		// print the argument keys and values
 		for _, k := range keys {
 			fmt.Printf("%9s %v\n", k, arguments[k])
@@ -76,7 +76,7 @@ Options:
 	*/
 
 	if arguments["upload"] == true {
-		configLocation, _ := arguments["<config>"].(string)
+		configLocation, _ := arguments["--config"].(string)
 		err := initializeConfiguration(configLocation)
 		if err != nil {
 			fmt.Println(err)
@@ -175,7 +175,7 @@ func uploadLessFile(uploadFilePath string, config Configuration) {
 		if err != nil {
 			log.Fatalln(err)
 		}
-	}
+	} 
 
 }
 
@@ -206,6 +206,11 @@ func uploadFile(uploadFilePath string, extras map[string]string, uploadUri strin
 		resp.Body.Close()
 
 		uploadStatus = resp.StatusCode
+
+		if uploadStatus != 200 {
+			b, _ := ioutil.ReadAll(body)
+			log.Println(string(b))
+		}
 
 		//log.Printf("Upload status %v", resp.StatusCode)
 	}
