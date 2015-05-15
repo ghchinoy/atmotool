@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<!-- saved from url=(0115)http://pdobuild:8080/job/PM-7.2/HTML_Report/api-http___soa.com_uri_products_serviceadmin_wsdl_1.0-ServiceAdmin.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Service Service Management API Information</title>
+		
+		<link href="http://pdobuild:8080/job/PM-7.2/HTML_Report/css/bootstrap.min.css" rel="stylesheet">
+		<link href="http://pdobuild:8080/job/PM-7.2/HTML_Report/css/default.css" rel="stylesheet">
+		<link href="http://pdobuild:8080/job/PM-7.2/HTML_Report/css/api.css" rel="stylesheet">
+		
+	</head>
+	<body class="main" cz-shortcut-listen="true">
+	
+		<div class="header"></div>
+		<div class="">
+			<div class="info">
+				<h2>Service Management API <small>{http://soa.com/uri/products/serviceadmin/wsdl/1.0}ServiceAdmin</small></h2>
+				
+									<h5>The API used to manage PM services.</h5>
+																	<strong>Version:</strong><span> 7.0.0</span>
+								
+																			</div>
+			
+			<div class="operations">
+			
+						
+				<div class="GET operation container-fluid">
+					<div class="operation-heading clickable row" data-target="operation-1-details">
+						<h5>
+							<strong class="http_method">GET</strong>
+							<span class="path">/services/{key}</span>
+														<span class="pull-right" style="margin-right:8px;">getService</span>							
+													</h5>
+					</div>
+					
+					<div id="operation-1-details" class="container-fluid operation-detail" style="display: none;">
+					
+												<div class="row">
+							<h6>Get details for a specific hosted service.</h6>
+						</div>
+											
+											
+												<div class="container-fluid">
+							<h5>Parameters</h5>
+							<div class="underline row">
+								<div class="col-md-3">Name</div>
+								<div class="col-md-2">Type</div>
+								<div class="col-md-7">Description</div>
+							</div>
+														<div class="row">
+								<div class="col-md-3">key</div>
+								<div class="col-md-2">path</div>
+																<div class="col-md-7">The service key</div>
+															</div>
+													</div>
+												
+												<div class="container-fluid">
+							<h5>Reponse Type</h5>
+							
+														<div class="row">
+								<div class="col-md-12">
+									<strong>Produces </strong>
+																			<span>application/json</span>
+																			<span>application/xml</span>
+																	</div>
+							</div>						
+														
+													</div>
+											
+											
+					</div>
+				</div>			
+						
+				<div class="GET operation container-fluid">
+					<div class="operation-heading clickable row" data-target="operation-2-details">
+						<h5>
+							<strong class="http_method">GET</strong>
+							<span class="path">/services/{key}/definition</span>
+														<span class="pull-right" style="margin-right:8px;">getDefinitions</span>							
+													</h5>
+					</div>
+					
+					<div id="operation-2-details" class="container-fluid operation-detail" style="display: none">
+					
+												<div class="row">
+							<h6>Get the available description documents for a specific service.</h6>
+						</div>
+											
+											
+												<div class="container-fluid">
+							<h5>Parameters</h5>
+							<div class="underline row">
+								<div class="col-md-3">Name</div>
+								<div class="col-md-2">Type</div>
+								<div class="col-md-7">Description</div>
+							</div>
+														<div class="row">
+								<div class="col-md-3">key</div>
+								<div class="col-md-2">path</div>
+																<div class="col-md-7">The service key</div>
+															</div>
+													</div>
+												
+												<div class="container-fluid">
+							<h5>Reponse Type</h5>
+							
+														<div class="row">
+								<div class="col-md-12">
+									<strong>Produces </strong>
+																			<span>*/*</span>
+																	</div>
+							</div>						
+														
+													</div>
+											
+											
+					</div>
+				</div>			
+						
+				<div class="GET operation container-fluid">
+					<div class="operation-heading clickable row" data-target="operation-3-details">
+						<h5>
+							<strong class="http_method">GET</strong>
+							<span class="path">/services/{key}/definition/{format}</span>
+														<span class="pull-right" style="margin-right:8px;">getDefinition</span>							
+													</h5>
+					</div>
+					
+					<div id="operation-3-details" class="container-fluid operation-detail" style="display: none">
+					
+												<div class="row">
+							<h6>Get a particular description document for a service.</h6>
+						</div>
+											
+											
+												<div class="container-fluid">
+							<h5>Parameters</h5>
+							<div class="underline row">
+								<div class="col-md-3">Name</div>
+								<div class="col-md-2">Type</div>
+								<div class="col-md-7">Description</div>
+							</div>
+														<div class="row">
+								<div class="col-md-3">format</div>
+								<div class="col-md-2">path</div>
+																<div class="col-md-7">The desired document format, e.g. "wsdl", "wadl", "raml","swagger"</div>
+															</div>
+														<div class="row">
+								<div class="col-md-3">key</div>
+								<div class="col-md-2">path</div>
+																<div class="col-md-7">The service key</div>
+															</div>
+													</div>
+												
+												<div class="container-fluid">
+							<h5>Reponse Type</h5>
+							
+														<div class="row">
+								<div class="col-md-12">
+									<strong>Produces </strong>
+																			<span>*/*</span>
+																	</div>
+							</div>						
+														
+													</div>
+											
+											
+					</div>
+				</div>			
+						
+				<div class="GET operation container-fluid">
+					<div class="operation-heading clickable row" data-target="operation-4-details">
+						<h5>
+							<strong class="http_method">GET</strong>
+							<span class="path">/services/{key}/definition/{format}/{reference:.+}</span>
+														<span class="pull-right" style="margin-right:8px;">getDefinitionReference</span>							
+													</h5>
+					</div>
+					
+					<div id="operation-4-details" class="container-fluid operation-detail" style="display: none">
+					
+												<div class="row">
+							<h6>Get a document referenced from a description document.</h6>
+						</div>
+											
+											
+												<div class="container-fluid">
+							<h5>Parameters</h5>
+							<div class="underline row">
+								<div class="col-md-3">Name</div>
+								<div class="col-md-2">Type</div>
+								<div class="col-md-7">Description</div>
+							</div>
+														<div class="row">
+								<div class="col-md-3">reference</div>
+								<div class="col-md-2">path</div>
+																<div class="col-md-7">The document reference.</div>
+															</div>
+														<div class="row">
+								<div class="col-md-3">format</div>
+								<div class="col-md-2">path</div>
+																<div class="col-md-7">The desired document format, e.g. "wsdl", "wadl", "raml","swagger"</div>
+															</div>
+														<div class="row">
+								<div class="col-md-3">key</div>
+								<div class="col-md-2">path</div>
+																<div class="col-md-7">The service key.</div>
+															</div>
+													</div>
+												
+												<div class="container-fluid">
+							<h5>Reponse Type</h5>
+							
+														<div class="row">
+								<div class="col-md-12">
+									<strong>Produces </strong>
+																			<span>*/*</span>
+																	</div>
+							</div>						
+														
+													</div>
+											
+											
+					</div>
+				</div>			
+						
+				<div class="DELETE operation container-fluid">
+					<div class="operation-heading clickable row" data-target="operation-5-details">
+						<h5>
+							<strong class="http_method">DELETE</strong>
+							<span class="path">/services/{key}/definition</span>
+														<span class="pull-right" style="margin-right:8px;">removeDefinition</span>							
+													</h5>
+					</div>
+					
+					<div id="operation-5-details" class="container-fluid operation-detail" style="display: none">
+					
+												<div class="row">
+							<h6>Remove all definition documents for a service.</h6>
+						</div>
+											
+											
+												<div class="container-fluid">
+							<h5>Parameters</h5>
+							<div class="underline row">
+								<div class="col-md-3">Name</div>
+								<div class="col-md-2">Type</div>
+								<div class="col-md-7">Description</div>
+							</div>
+														<div class="row">
+								<div class="col-md-3">key</div>
+								<div class="col-md-2">path</div>
+																<div class="col-md-7">The service key.</div>
+															</div>
+													</div>
+												
+											
+											
+					</div>
+				</div>			
+						
+				<div class="POST operation container-fluid">
+					<div class="operation-heading clickable row" data-target="operation-6-details">
+						<h5>
+							<strong class="http_method">POST</strong>
+							<span class="path">/services</span>
+														<span class="pull-right" style="margin-right:8px;">uploadDefinition</span>							
+													</h5>
+					</div>
+					
+					<div id="operation-6-details" class="container-fluid operation-detail" style="display: none">
+					
+												<div class="row">
+							<h6>Upload a service definition.</h6>
+						</div>
+											
+												<div class="row">
+							<strong>Accepts </strong>
+															<span>multipart/form-data</span>
+													</div>
+											
+												<div class="container-fluid">
+							<h5>Parameters</h5>
+							<div class="underline row">
+								<div class="col-md-3">Name</div>
+								<div class="col-md-2">Type</div>
+								<div class="col-md-7">Description</div>
+							</div>
+														<div class="row">
+								<div class="col-md-3">org</div>
+								<div class="col-md-2">query</div>
+																<div class="col-md-7">The organization key for the target organization.</div>
+															</div>
+														<div class="row">
+								<div class="col-md-3">qname</div>
+								<div class="col-md-2">query</div>
+																<div class="col-md-7">The service qname.</div>
+															</div>
+														<div class="row">
+								<div class="col-md-3">name</div>
+								<div class="col-md-2">query</div>
+																<div class="col-md-7">The service name.</div>
+															</div>
+														<div class="row">
+								<div class="col-md-3">description</div>
+								<div class="col-md-2">query</div>
+																<div class="col-md-7">The service description.</div>
+															</div>
+														<div class="row">
+								<div class="col-md-3">body</div>
+								<div class="col-md-2">entity</div>
+																<div class="col-md-7">The uploaded file.</div>
+															</div>
+														<div class="row">
+								<div class="col-md-3">key</div>
+								<div class="col-md-2">query</div>
+																<div class="col-md-7">The service key.</div>
+															</div>
+													</div>
+												
+											
+											
+					</div>
+				</div>			
+						
+				<div class="POST operation container-fluid">
+					<div class="operation-heading clickable row" data-target="operation-7-details">
+						<h5>
+							<strong class="http_method">POST</strong>
+							<span class="path">/services/import</span>
+														<span class="pull-right" style="margin-right:8px;">importDefinition</span>							
+													</h5>
+					</div>
+					
+					<div id="operation-7-details" class="container-fluid operation-detail" style="display: none">
+					
+												<div class="row">
+							<h6>Import a service definition from a URL.</h6>
+						</div>
+											
+												<div class="row">
+							<strong>Accepts </strong>
+															<span>application/json</span>
+															<span>application/xml</span>
+															<span>text/xml</span>
+													</div>
+											
+												<div class="container-fluid">
+							<h5>Parameters</h5>
+							<div class="underline row">
+								<div class="col-md-3">Name</div>
+								<div class="col-md-2">Type</div>
+								<div class="col-md-7">Description</div>
+							</div>
+														<div class="row">
+								<div class="col-md-3">body</div>
+								<div class="col-md-2">entity</div>
+																<div class="col-md-7">The service import information.</div>
+															</div>
+													</div>
+												
+											
+											
+					</div>
+				</div>			
+						
+				<div class="PUT operation container-fluid">
+					<div class="operation-heading clickable row" data-target="operation-8-details">
+						<h5>
+							<strong class="http_method">PUT</strong>
+							<span class="path">/services/{key}</span>
+														<span class="pull-right" style="margin-right:8px;">change</span>							
+													</h5>
+					</div>
+					
+					<div id="operation-8-details" class="container-fluid operation-detail" style="display: none">
+					
+												<div class="row">
+							<h6>Update a service.</h6>
+						</div>
+											
+												<div class="row">
+							<strong>Accepts </strong>
+															<span>application/json</span>
+															<span>application/xml</span>
+															<span>text/xml</span>
+													</div>
+											
+												<div class="container-fluid">
+							<h5>Parameters</h5>
+							<div class="underline row">
+								<div class="col-md-3">Name</div>
+								<div class="col-md-2">Type</div>
+								<div class="col-md-7">Description</div>
+							</div>
+														<div class="row">
+								<div class="col-md-3">body</div>
+								<div class="col-md-2">entity</div>
+																<div class="col-md-7">The service information to update.</div>
+															</div>
+														<div class="row">
+								<div class="col-md-3">key</div>
+								<div class="col-md-2">path</div>
+																<div class="col-md-7">The service key.</div>
+															</div>
+													</div>
+												
+												<div class="container-fluid">
+							<h5>Reponse Type</h5>
+							
+														<div class="row">
+								<div class="col-md-12">
+									<strong>Produces </strong>
+																			<span>application/json</span>
+																			<span>application/xml</span>
+																			<span>text/xml</span>
+																	</div>
+							</div>						
+														
+													</div>
+											
+											
+					</div>
+				</div>			
+						
+				<div class="PUT operation container-fluid">
+					<div class="operation-heading clickable row" data-target="operation-9-details">
+						<h5>
+							<strong class="http_method">PUT</strong>
+							<span class="path">/services/{key}/definition</span>
+														<span class="pull-right" style="margin-right:8px;">Upload an updated definition</span>
+													</h5>
+					</div>
+					
+					<div id="operation-9-details" class="container-fluid operation-detail" style="display: none">
+					
+												<div class="row">
+							<h6>Update a service by uploading a new definition.</h6>
+						</div>
+											
+												<div class="row">
+							<strong>Accepts </strong>
+															<span>multipart/form-data</span>
+													</div>
+											
+												<div class="container-fluid">
+							<h5>Parameters</h5>
+							<div class="underline row">
+								<div class="col-md-3">Name</div>
+								<div class="col-md-2">Type</div>
+								<div class="col-md-7">Description</div>
+							</div>
+														<div class="row">
+								<div class="col-md-3">body</div>
+								<div class="col-md-2">entity</div>
+																<div class="col-md-7">The uploaded file.</div>
+															</div>
+														<div class="row">
+								<div class="col-md-3">key</div>
+								<div class="col-md-2">path</div>
+																<div class="col-md-7">The service key.</div>
+															</div>
+													</div>
+												
+											
+											
+					</div>
+				</div>			
+						
+				<div class="PUT operation container-fluid">
+					<div class="operation-heading clickable row" data-target="operation-10-details">
+						<h5>
+							<strong class="http_method">PUT</strong>
+							<span class="path">/services/{key}/definition</span>
+														<span class="pull-right" style="margin-right:8px;">changeByImportingDefinition</span>							
+													</h5>
+					</div>
+					
+					<div id="operation-10-details" class="container-fluid operation-detail" style="display: none">
+					
+												<div class="row">
+							<h6>Update a service by importing a new definition.</h6>
+						</div>
+											
+												<div class="row">
+							<strong>Accepts </strong>
+															<span>application/json</span>
+															<span>application/xml</span>
+															<span>text/xml</span>
+													</div>
+											
+												<div class="container-fluid">
+							<h5>Parameters</h5>
+							<div class="underline row">
+								<div class="col-md-3">Name</div>
+								<div class="col-md-2">Type</div>
+								<div class="col-md-7">Description</div>
+							</div>
+														<div class="row">
+								<div class="col-md-3">body</div>
+								<div class="col-md-2">entity</div>
+																<div class="col-md-7">The service import information.</div>
+															</div>
+														<div class="row">
+								<div class="col-md-3">key</div>
+								<div class="col-md-2">path</div>
+																<div class="col-md-7">The service key.</div>
+															</div>
+													</div>
+												
+											
+											
+					</div>
+				</div>			
+						
+				<div class="DELETE operation container-fluid">
+					<div class="operation-heading clickable row" data-target="operation-11-details">
+						<h5>
+							<strong class="http_method">DELETE</strong>
+							<span class="path">/services/{key}</span>
+														<span class="pull-right" style="margin-right:8px;">Delete a service</span>
+													</h5>
+					</div>
+					
+					<div id="operation-11-details" class="container-fluid operation-detail" style="display: none">
+					
+												<div class="row">
+							<h6>Remove a service.</h6>
+						</div>
+											
+											
+												<div class="container-fluid">
+							<h5>Parameters</h5>
+							<div class="underline row">
+								<div class="col-md-3">Name</div>
+								<div class="col-md-2">Type</div>
+								<div class="col-md-7">Description</div>
+							</div>
+														<div class="row">
+								<div class="col-md-3">key</div>
+								<div class="col-md-2">path</div>
+																<div class="col-md-7">The service key.</div>
+															</div>
+													</div>
+												
+											
+											
+					</div>
+				</div>			
+								
+			</div>
+			
+		</div>
+		
+		<div class="footer"></div>
+		
+		<script src="./Service Service Management API Information_files/jquery-1.11.1.min.js"></script>
+		<script>
+		  	$(document ).ready(function() {
+			    $(".clickable").click(function(event) {
+			    	var target = event.currentTarget.attributes["data-target"];
+			    	if (target) {
+			    		$("#"+target.value).slideToggle(200);
+			    	}
+			    });
+			});		
+		</script>
+	
+</body></html>
