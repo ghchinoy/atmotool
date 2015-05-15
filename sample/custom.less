@@ -1,0 +1,299 @@
+/**
+ *  Commonly used variables to customize styles
+ *  Tenant: Sample
+ *  Theme: Default  
+ */
+
+// base color, often used for navbar (left or top) background color, link text color, button background color, etc 
+// @main-color: #2683b4;
+@main-color: #990000;
+
+// when base color is used as a background, what's the text color on top? 
+// @inverse-color: #fff;
+
+// the main color of the entire page's background 
+// @canvas-color: @inverse-color;
+
+// color of link text
+// @link-color: @main-color;
+
+// backround color of the header of any box with a defined border and a header -- encompasses both the content section and smaller widgets
+//@box-header-bg-color: @main-color;
+
+// text color of the header of any box with a defined border and a header -- encompasses both the content section and smaller widgets
+// @box-header-text-color: @inverse-color;
+
+// border color of any box with a defined border and a header -- encompasses both the content section and smaller widgets
+// @box-border-color: @main-color;
+
+// background color of any box with a defined border and a header -- encompasses both the content section and smaller widgets
+// @box-bg-color: @canvas-color;
+
+// text color of any box with a defined border and a header -- encompasses both the content section and smaller widgets
+// @box-text-color: @plain-text-color;
+
+// widgets, such as those on dashboard, border color
+// @widget-border-color: @box-border-color;
+
+// widgets, such as those on dashboard, background color
+// @widget-bg-color: @box-bg-color;
+
+// widgets, such as those on dashboard, header background color
+// @widget-header-bg-color: @box-header-bg-color;
+
+// widgets, such as those on dashboard, header text color
+// @widget-header-text-color: @box-header-text-color;
+
+// color of the leftnav header over form elements -- example would be the leftnav filter widget on Dashboard
+// @leftnav-header-text-color: lighten(@disabled-text-color,40%);
+
+// default color of leftnav link item
+// @leftnav-default-text-color: @leftnav-header-text-color;
+
+// color of the text of leftnav link item that signifies where you are, the "active" item
+// @leftnav-active-text-color: @canvas-color;
+
+// text color of the secondary menus, under each main item in the left nav (when item is open)
+// @leftnav-subnav-default-text-color: @plain-text-color;
+
+// "active" text color of the secondary menus, under each main item in the left nav (when item is open)
+// @leftnav-subnav-active-text-color: @disabled-text-color;
+
+// color of content area text that is not a link 
+// @plain-text-color: #3d4242;
+
+// horizontal rules' color within the content section of each page 
+// @content-divider-color: lighten(@plain-text-color,30%);
+
+// paragraph header within the content section of each page
+// @section-header-text-color: @main-color;
+
+// labels for input fields of forns, typically to the left or over a text field (for example)
+// @label-text-color: @main-color;
+
+// more detailed commonly used variables
+
+// (1) (2) (3)... steps for a wizard
+// @wizard-nav-text-color: @main-color;
+
+// modal overlay, the semitransparent background that makes the modal dialog stand out more in front (default is gray); the color will appear to be 70% lighter than defined below because of the transparency
+// @modal-overlay-bg-color: @plain-text-color;
+
+// popup dialog header background color 
+// @dialog-header-bg-color: #cfd7d5;
+
+// popup dialog header text color 
+// @dialog-header-text-color: @main-color;
+
+// default text color of the top navigation 
+// @topnav-text-color: @inverse-color;
+
+// bg color of the top navigation 
+// @topnav-bg-color: @main-color;
+
+// color of the separator within the topnav "user info" tools
+// @topnav-separator-color: @topnav-text-color;
+
+// border color of the top navigation individual main elements: user tools, signin trigger, "add new", and search; if no border then use the c @topnav-bg-color 
+// @topnav-border-color: @topnav-bg-color;
+
+// topnav default link color 
+// @topnav-link-text-color: @topnav-text-color;
+
+// topnav submenu header background color 
+// @topnav-submenu-header-bg-color: @dialog-header-bg-color;
+
+// topnav submenu header text color 
+// @topnav-submenu-header-text-color: @dialog-header-text-color;
+
+// topnav submenu default text color 
+// @topnav-submenu-text-color: @plain-text-color;
+
+// topnav submenu default link color 
+// @topnav-submenu-link-text-color: @topnav-bg-color;
+
+// topnav submenu specifically for popular searches
+// @topnav-submenu-popular-searches-link-color: @topnav-submenu-text-color;
+
+// topnav popular searches link color
+// @topnav-popular-searches-link-color: @topnav-text-color;
+
+// topnav "dashboard" link color
+// @topnav-dashboard-link-color: @topnav-text-color;
+
+// topnav notification count background color
+// @topnav-notification-count-bg-color: @input-bg-color;
+
+// topnav notification count border color
+// @topnav-notification-count-border-color: @topnav-notification-count-bg-color;
+
+// topnav notification count text color
+// @topnav-notification-count-text-color: @plain-text-color;
+
+// topnav notification count divider color
+// @topnav-notification-count-divider-color: @topnav-notification-count-border-color;
+
+// topnav search button background color 
+// @topnav-search-button-bg-color: @topnav-bg-color;
+
+// topnav search field background color 
+// @topnav-input-bg-color: #eceded;
+
+// topnav search field border color
+// @topsearch-border-color: @topnav-border-color;
+
+// leftnav background color 
+// @leftnav-bg-color: @main-color;
+
+// leftnav header, found for example on a leftnav set of board filters, text color 
+// @leftnav-header-text-color: screen(lighten(@plain-text-color,25%),#ccc);
+
+// any horizontal rule that appears in the leftnav 
+// @leftnav-divider-color: @leftnav-active-text-color;
+
+// border color of input fields when focused
+// @input-border-color: @input-bg-color;
+
+// background color of input fields when focused
+// @input-bg-color: #eceded;
+
+// border color of input fields when focused
+// @input-border-color: @input-bg-color;
+
+// border color of input fields when focused
+// @input-border-color: @input-bg-color;
+
+// text color of input fields  when focused
+// @input-text-color: @plain-text-color;
+
+// default background color of input fields
+// @input-bg-blurred-color: @input-bg-color;
+
+// default border color of input fields
+// @input-border-blurred-color: @disabled-bg-color;
+
+// default text color of input fields
+// @input-text-blurred-color: #999;
+
+// top left logo image path
+// @logo-img: url("images/logo_50.png");
+
+// width of the logo, max 295px; logo height is fixed at 46px
+// @logo-width: 232px;
+
+// default link color
+// @link-color: @main-color;
+
+// background color of a "control header" -- example can be found at the top of the content area in the Admins page of API details
+// @control-header-bg-color: lighten(@content-divider-color,35%);
+
+// border color of a "control header" -- example can be found at the top of the content area in the Admins page of API details
+// @control-header-border-color: @control-header-bg-color;
+
+// bottom border color of a "control header" -- example can be found at the top of the content area in the Admins page of API details
+// @control-header-bottom-border-color: @control-header-bg-color;
+
+// background color of such inputs in a control header -- example can be found at the top of the content area of an API board
+// @control-header-input-bg-color: @canvas-color;
+
+// border color of such inputs in a control header -- example can be found at the top of the content area of an API board
+// @control-header-input-border-color: @canvas-color;
+
+// text color of such inputs in a control header -- example can be found at the top of the content area of an API board
+// @control-header-input-border-color: @input-text-color;
+
+// path to the image file of link-color 15px sprites
+// @icon-15px: url("images/sprites_15_color.png");
+
+// path to the image file of 15px sprites of navigation items that reflect the current section of the site
+// @icon-active-15px: url("images/sprites_15_color.png");
+
+// path to the image file of 15px sprites that would be used against the content background
+// @icon-content-15px: @icon-15px;
+
+// path to the image file of link-color 18px sprites
+// @icon-18px: url("images/sprites_18_color.png");
+
+// path to the image file of 18px sprites of navigation items that reflect the current section of the site
+// @icon-active-18px: url("images/sprites_18_color.png");
+
+// path to the image file of 18px sprites that would be used against the content background
+// @icon-content-18px: @icon-18px;
+
+// path to the image file of sprites which refer to system functions
+// @icon-system: url("images/sprites_system_color.png");
+
+// path to the image file of sprites seen as wizard steps (step 1, step 2, ... , step 7)
+// @icon-steps: url("images/sprites_numbers_color.png");
+
+// path to the image file of sprites in the topnav "add new" menu options
+// @icon-adds: url("images/sprites_add_menu_color.png");
+
+// path to the image file of sprites which can be used against the header (page title) of the content area
+// @icon-for-content-header: url("images/sprites_18_color.png");
+
+// path to the image file of default link color sprites in the "Add New" and "Help" trigger controls
+// @topnav-questionplus-icon: url("images/sprites_question_plus_color.png");
+
+// path to the image file of rollover link color sprites in the "Add New" and "Help" trigger controls
+// @topnav-active-questionplus-icon: url("images/sprites_question_plus_color.png");
+
+// path to the image file of sprites used in the content area to indicate a lack of elements (eg: search results, 0 followers, or having accessed an area that requires login to see contents)
+// @icon-empty-behav: url("images/sprites_empty_color.png");
+
+// path to the image file of 18px sprites of leftnav navigation items
+// @leftnav-icons: url("images/sprites_18_color.png");
+
+// path to the image file of 18px sprites of leftnav navigation items that reflect the current section of "subject" details
+// @leftnav-active-icons: @icon-active-18px;
+
+// background color of table column headers
+// @table-head-bg-color: @plain-text-color;
+
+// text color of table column headers
+// @table-head-text-color: @inverse-color;
+
+// the divider between the notification # box in the top nav and the navigation links to the right
+// @topnav-notification-count-divider-color: @topnav-notification-count-bg-color;
+
+ // the border around the notification # box
+// @topnav-notification-count-border-color: @topnav-notification-count-bg-color;
+
+// text color of the notification # box
+// @topnav-notification-count-text-color: @plain-text-color;
+
+// border around a tooltip bubble
+// @tooltip-border-color: @main-color;
+
+// background color of a tooltip bubble
+// @tooltip-background-color: @main-color;
+
+// text color of a tooltip bubble
+// @tooltip-text-color: @inverse-color;
+
+// buttons
+// @primary-button-text-color: @canvas-color; // the text color of a primary (submit, OK, etc) button
+// @primary-button-gradient-lightest: #ffaa44; // in the default (unclicked) position, the color at the top of the button's gradient
+// @primary-button-gradient-base: #ff9009; // in the default (unclicked) position, the color at the bottom of the button's gradient; also the color of the button when the browser does not support gradient. It's important that this color is a sharp contrast to the text color
+// @primary-button-text-shadow-color: darken(#c98b20,5%); //The top shadow color of the inlayed text of an unclicked button
+
+// @secondary-button-text-color: @canvas-color; // the text color of a secondary (cancel, etc) button
+// @secondary-button-gradient-lightest: #808080; // in the default (unclicked) position, the color at the top of the button's gradient
+// @secondary-button-gradient-base: #585858; // in the default (unclicked) position, the color at the bottom of the button's gradient; also the color of the button when the browser does not support gradient. It's important that this color is a sharp contrast to the text color
+// @secondary-button-text-shadow-color: darken(#7e7e7e,15%); //The top shadow color of the inlayed text of an unclicked button
+
+// chart filters container
+// @filters-bg-color: #f8f8f8;
+// @filters-border-color: #e5e5e5;
+
+//Advanced specific selectors
+
+//#Signup .soa-ui-cm-visibility-resendActivationEmail {
+//	display: none;
+//}
+//#Signup .soa-ui-cm-visibility-startover {
+//	display: none;
+//}
+//#Signup .wizardTab.tab3, #Signup .wizardTabTitle.tab3  {
+//	display: none;
+//}
