@@ -33,7 +33,7 @@ type Auth struct {
 	Password string `json:"password"`
 }
 
-const LESS_URI = "/resources/theme/default/less?unpack=false"
+const CUSTOM_LESS_URI = "/resources/theme/default/less?unpack=false"
 
 var (
 	config Configuration
@@ -74,6 +74,8 @@ Options:
 			fmt.Printf("%9s %v\n", k, arguments[k])
 		}
 	*/
+
+	// switch?
 
 	if arguments["upload"] == true {
 		configLocation, _ := arguments["--config"].(string)
@@ -161,7 +163,7 @@ func uploadLessFile(uploadFilePath string, config Configuration) {
 	extraParams := map[string]string{
 		"none": "really",
 	}
-	uploadUri := config.Url + LESS_URI
+	uploadUri := config.Url + CUSTOM_LESS_URI
 
 	statusCode, err := uploadFile(uploadFilePath, extraParams, uploadUri)
 	if err != nil {
@@ -175,15 +177,13 @@ func uploadLessFile(uploadFilePath string, config Configuration) {
 		if err != nil {
 			log.Fatalln(err)
 		}
-	} 
+	}
 
 }
 
 func uploadFile(uploadFilePath string, extras map[string]string, uploadUri string) (int, error) {
 
 	var uploadStatus int
-
-	//uploadUri := config.Url + LESS_URI
 
 	var request *http.Request
 	request, err := newFileUploadRequest(uploadUri, extras, "File", uploadFilePath)
@@ -192,6 +192,13 @@ func uploadFile(uploadFilePath string, extras map[string]string, uploadUri strin
 		return uploadStatus, err
 	}
 	request.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+
+	// debug
+	/*
+		for k, v := range request.Header {
+			log.Printf("%s : %s", k, v)
+		}
+	*/
 
 	resp, err := client.Do(request)
 	if err != nil {
