@@ -104,6 +104,10 @@ Looks for and uploads `custom.less`, `PREFIX_resourcesThemeDefault.zip`, `PREFIX
 ## Development
 
 
+### 1.1.1
+
+* fixes issue #5, adds `.conf` to exclude list for zipping, so as not to include `local.conf`
+
 ### 1.1.0
 
 * `download` action, downloads a zip of a `--path`

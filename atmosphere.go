@@ -74,7 +74,7 @@ Options:
 `
 	//   atmosphere upload all --config <config> [--dir <dir>]
 
-	arguments, _ := docopt.Parse(usage, nil, true, "1.1.0 cirrus", false)
+	arguments, _ := docopt.Parse(usage, nil, true, "1.1.1 cirrus", false)
 
 	// Debug for command-line args
 	/*
