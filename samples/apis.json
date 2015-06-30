@@ -1,0 +1,742 @@
+{
+  "channel" : {
+    "title" : "APIs",
+    "item" : [ {
+      "title" : "People",
+      "description" : "People API",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "73b850a8-d6ae-4bdc-bad5-2ff0fe833314.enterpriseapi"
+      },
+      "pubDate" : "Wed, 30 Apr 2014 03:40:54 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "People (1.0)",
+          "Guid" : "e109a17b-545b-45f1-9890-beea80f01e4e.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "People (1.0)",
+        "Guid" : "e109a17b-545b-45f1-9890-beea80f01e4e.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/73b850a8-d6ae-4bdc-bad5-2ff0fe833314.enterpriseapi/avatars/443b5f1b-010f-49e8-bc14-e0cc0e19ee1e.png"
+      }
+    }, {
+      "title" : "FAA Airport and Weather",
+      "description" : "FAA Airport & Weather \nhttp://services.faa.gov/airport/status/ALB?format=application/xml",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "48db8970-af8a-40c2-b544-a318bf941932.enterpriseapi"
+      },
+      "pubDate" : "Tue, 16 Dec 2014 03:16:39 -0700",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "FAA Airport and Weather (1.0)",
+          "Guid" : "adf8c415-4dbe-4d1a-a67f-83f6b93b397d.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "FAA Airport and Weather (1.0)",
+        "Guid" : "adf8c415-4dbe-4d1a-a67f-83f6b93b397d.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/48db8970-af8a-40c2-b544-a318bf941932.enterpriseapi/avatars/9c706b14-887f-4b44-aaec-fee54ab4eea0.png"
+      }
+    }, {
+      "title" : "City of Albany Open Data",
+      "description" : "REST version of Albany, NY City Budget Summary  and Revenues 2013",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "c111a633-f5a1-4ea0-96a8-97aef1bdbdd6.enterpriseapi"
+      },
+      "pubDate" : "Thu, 01 May 2014 02:13:42 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "City of Albany Open Data (1.0)",
+          "Guid" : "e9b62ddf-01a3-4cbd-8ad2-5c5d99e6a20e.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "City of Albany Open Data (1.0)",
+        "Guid" : "e9b62ddf-01a3-4cbd-8ad2-5c5d99e6a20e.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/c111a633-f5a1-4ea0-96a8-97aef1bdbdd6.enterpriseapi/avatars/c5acf74b-4c36-412e-95d3-34dd4a5597a7.png"
+      }
+    }, {
+      "title" : "Appointment Manager",
+      "description" : "HRB Appointment Manager",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "f07b24b1-6d3d-482b-9f63-859fd5857372.enterpriseapi"
+      },
+      "pubDate" : "Wed, 07 May 2014 02:08:30 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "Appointment Manager (2.0)",
+          "Guid" : "a9d7901e-a205-490a-bbd6-1918da4c642c.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "Appointment Manager (2.0)",
+        "Guid" : "a9d7901e-a205-490a-bbd6-1918da4c642c.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/f07b24b1-6d3d-482b-9f63-859fd5857372.enterpriseapi/avatars/c5adb1bd-7a07-4470-9bf1-c27d0149c888.png"
+      }
+    }, {
+      "title" : "CardOperations-Mock",
+      "description" : "Card Operations Mock Service for H&R Block",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "3b1cd5ad-5152-43ac-96aa-b8cf9e06d7ce.enterpriseapi"
+      },
+      "pubDate" : "Thu, 15 May 2014 01:22:31 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "CardOperations-Mock (1.0)",
+          "Guid" : "4ea7bafa-2382-4c3c-834f-cfbf4f0607fd.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "CardOperations-Mock (1.0)",
+        "Guid" : "4ea7bafa-2382-4c3c-834f-cfbf4f0607fd.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/3b1cd5ad-5152-43ac-96aa-b8cf9e06d7ce.enterpriseapi/avatar"
+      }
+    }, {
+      "title" : "Place Search",
+      "description" : "Places search service allows for searching for NRCS designated places.",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "07d6e0cf-5f55-432a-9d19-8389f33a2f39.enterpriseapi"
+      },
+      "pubDate" : "Tue, 20 May 2014 04:20:39 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "Place Search (1.0)",
+          "Guid" : "48c50f32-8d05-4770-b136-ebf9826ae69b.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "Place Search (1.0)",
+        "Guid" : "48c50f32-8d05-4770-b136-ebf9826ae69b.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/07d6e0cf-5f55-432a-9d19-8389f33a2f39.enterpriseapi/avatars/bd6e009c-8b25-47d5-9dac-9dc0a4d8fedc.png"
+      }
+    }, {
+      "title" : "Consumer Finance Institutions",
+      "description" : "Details about lending institutions reporting Home Mortgage Disclosure Act (HMDA) data.",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "17b652cd-d19b-45cd-aba9-a114c254a7ac.enterpriseapi"
+      },
+      "pubDate" : "Mon, 18 Aug 2014 00:33:16 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "Consumer Finance Institutions (2.0)",
+          "Guid" : "a7ec33a9-1129-4ce0-8e7d-45def40ecbf8.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "Consumer Finance Institutions (2.0)",
+        "Guid" : "a7ec33a9-1129-4ce0-8e7d-45def40ecbf8.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/17b652cd-d19b-45cd-aba9-a114c254a7ac.enterpriseapi/avatars/2de661ac-d4e2-4dbf-824b-f71c99c2d06b.png"
+      }
+    }, {
+      "title" : "CCF Utility Broad",
+      "description" : "Cleveland Clinic Utility API, full listing of APIs",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "2f814f7c-4b45-4b72-9800-9b3b4189cc86.enterpriseapi"
+      },
+      "pubDate" : "Sat, 14 Jun 2014 04:16:27 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "CCF Utility Broad (1.0)",
+          "Guid" : "bedce24c-8776-411a-8d10-65bdfb2f2130.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "CCF Utility Broad (1.0)",
+        "Guid" : "bedce24c-8776-411a-8d10-65bdfb2f2130.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/2f814f7c-4b45-4b72-9800-9b3b4189cc86.enterpriseapi/avatars/2658a4d0-584b-460e-b491-1b73d29466c1.png"
+      }
+    }, {
+      "title" : "CCF Utility Services",
+      "description" : "Limited access utility services",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "3cda5e84-3795-4974-ac66-5818b859d6c6.enterpriseapi"
+      },
+      "pubDate" : "Mon, 16 Jun 2014 06:38:51 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "CCF Utility Services (1.0)",
+          "Guid" : "65e1a13a-739a-4507-85fa-e9889bb3401b.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "CCF Utility Services (1.0)",
+        "Guid" : "65e1a13a-739a-4507-85fa-e9889bb3401b.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/3cda5e84-3795-4974-ac66-5818b859d6c6.enterpriseapi/avatar"
+      }
+    }, {
+      "title" : "CFPB Data",
+      "description" : "Consumer Financial Protection Bureau Data",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "6a276767-1280-482d-a7e2-be317743029b.enterpriseapi"
+      },
+      "pubDate" : "Fri, 20 Jun 2014 02:53:34 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "CFPB Data (2.0)",
+          "Guid" : "1f9af21a-7110-4af6-ac13-18e8943a8b88.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "CFPB Data (2.0)",
+        "Guid" : "1f9af21a-7110-4af6-ac13-18e8943a8b88.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/6a276767-1280-482d-a7e2-be317743029b.enterpriseapi/avatars/053bac17-54fd-4e12-9fed-7d8a157d6481.png"
+      }
+    }, {
+      "title" : "Business USA services",
+      "description" : "Business USA Services",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "07968143-f4d9-4f42-a4af-c5e9e4d1647e.enterpriseapi"
+      },
+      "pubDate" : "Wed, 04 Feb 2015 06:39:37 -0700",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "Business USA services (1.0)",
+          "Guid" : "e07f648e-625c-4300-b4c7-ca941090e4b6.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "Business USA services (1.0)",
+        "Guid" : "e07f648e-625c-4300-b4c7-ca941090e4b6.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/07968143-f4d9-4f42-a4af-c5e9e4d1647e.enterpriseapi/avatars/05078def-e8c3-4307-809b-c4c76762cf4e.png"
+      }
+    }, {
+      "title" : "Google Geocoder",
+      "description" : "Google Geocoder REST example",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "com.soa.visibility.registered.users",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "5f8c2268-8c99-4954-a28a-c39f338b7dc5.enterpriseapi"
+      },
+      "pubDate" : "Fri, 15 May 2015 11:55:00 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "Google Geocoder (2.0)",
+          "Guid" : "50749821-6630-48e4-9e93-7f08f04d2b50.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "Google Geocoder (2.0)",
+        "Guid" : "50749821-6630-48e4-9e93-7f08f04d2b50.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/5f8c2268-8c99-4954-a28a-c39f338b7dc5.enterpriseapi/avatars/e0c8c6ca-7332-44a8-8713-7b9125c482db.png"
+      }
+    }, {
+      "title" : "Account Manager Walkthrough",
+      "description" : "Example AM walkthrough",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "68f99e88-b068-4ec0-8986-e9da3e71dd89.enterpriseapi"
+      },
+      "pubDate" : "Tue, 07 Apr 2015 09:05:49 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "Account Manager Walkthrough (4.0)",
+          "Guid" : "c4099f80-54ca-46d9-ab9f-1b060d6b2d79.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "Account Manager Walkthrough (4.0)",
+        "Guid" : "c4099f80-54ca-46d9-ab9f-1b060d6b2d79.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/68f99e88-b068-4ec0-8986-e9da3e71dd89.enterpriseapi/avatar"
+      }
+    }, {
+      "title" : "Simple Geocoder API",
+      "description" : "Geocoder API",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "164bc07b-70bc-4043-938b-682612dcd25d.enterpriseapi"
+      },
+      "pubDate" : "Tue, 07 Oct 2014 07:37:28 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "Simple Geocoder API (1.0)",
+          "Guid" : "91e96de2-c448-4dfa-8394-e014ca955640.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "Simple Geocoder API (1.0)",
+        "Guid" : "91e96de2-c448-4dfa-8394-e014ca955640.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/164bc07b-70bc-4043-938b-682612dcd25d.enterpriseapi/avatar"
+      }
+    }, {
+      "title" : "Combined Person View",
+      "description" : "Retrieve a combined person and account balance view.",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "70d96fee-1d92-48a6-b49d-3347a0c701b2.enterpriseapi"
+      },
+      "pubDate" : "Thu, 02 Apr 2015 06:52:59 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "Combined Person View (1.0)",
+          "Guid" : "2b3d9e86-468f-4627-904c-5a83478129aa.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "Combined Person View (1.0)",
+        "Guid" : "2b3d9e86-468f-4627-904c-5a83478129aa.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/70d96fee-1d92-48a6-b49d-3347a0c701b2.enterpriseapi/avatars/f384db39-2e9a-49bb-bd4a-d4a17b81a5f8.png"
+      }
+    }, {
+      "title" : "NYS ECM Service",
+      "description" : "New York State ECM demo",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "4be638f2-50e2-48e6-82ba-ce0cebb32d7e.enterpriseapi"
+      },
+      "pubDate" : "Thu, 14 Aug 2014 09:27:48 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "NYS ECM Service (1.0)",
+          "Guid" : "7ab7eab0-b9fa-49a7-8329-4f85ce9eca67.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "NYS ECM Service (1.0)",
+        "Guid" : "7ab7eab0-b9fa-49a7-8329-4f85ce9eca67.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/4be638f2-50e2-48e6-82ba-ce0cebb32d7e.enterpriseapi/avatars/1528f9fa-4272-481e-a44b-cac52dcb2e99.png"
+      }
+    }, {
+      "title" : "Tracking External",
+      "description" : "FedEx External Tracking version 8",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "12d16b77-6b4e-43e5-b29b-0c3aace2bc74.enterpriseapi"
+      },
+      "pubDate" : "Mon, 08 Sep 2014 09:39:39 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "Tracking External (2.0)",
+          "Guid" : "9e9634d6-1cac-4278-a622-b3ccdb973fe4.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "Tracking External (2.0)",
+        "Guid" : "9e9634d6-1cac-4278-a622-b3ccdb973fe4.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/12d16b77-6b4e-43e5-b29b-0c3aace2bc74.enterpriseapi/avatars/3b7423ee-0692-46f2-8c5f-489c99602b7e.png"
+      }
+    }, {
+      "title" : "Licensed Account Manager",
+      "description" : "Account Manager API provides access to financials.",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "4e327fcf-820c-45d9-9cc1-c4ba683bef00.enterpriseapi"
+      },
+      "pubDate" : "Mon, 06 Oct 2014 10:40:04 -0600",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "Licensed Account Manager (1.0)",
+          "Guid" : "bd61905a-6408-41ff-aa3f-ded381a4139f.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "Licensed Account Manager (1.0)",
+        "Guid" : "bd61905a-6408-41ff-aa3f-ded381a4139f.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/4e327fcf-820c-45d9-9cc1-c4ba683bef00.enterpriseapi/avatar"
+      }
+    }, {
+      "title" : "SOA EMR FHIR",
+      "description" : "SOA EMR FHIR API",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "75bdf7e0-73ac-4930-873f-66ea09b25b7e.enterpriseapi"
+      },
+      "pubDate" : "Wed, 04 Feb 2015 06:14:51 -0700",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "SOA EMR FHIR (1.0)",
+          "Guid" : "701e4e7b-0844-478e-89a2-8082ca6c9e89.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "SOA EMR FHIR (1.0)",
+        "Guid" : "701e4e7b-0844-478e-89a2-8082ca6c9e89.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/75bdf7e0-73ac-4930-873f-66ea09b25b7e.enterpriseapi/avatars/5e53eb06-a6e0-4fa9-b613-427fbeb843dc.png"
+      }
+    }, {
+      "title" : "Alternative Fuel Station Locations",
+      "description" : "NREL's Alternative Fuel Station Locations",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "4b412771-021a-4e1a-8e57-d6c23aab7f96.enterpriseapi"
+      },
+      "pubDate" : "Wed, 04 Feb 2015 08:50:20 -0700",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "Alternative Fuel Station Locations (1.0)",
+          "Guid" : "da9da681-0e13-4dd5-9e28-a840dbbf2674.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "Alternative Fuel Station Locations (1.0)",
+        "Guid" : "da9da681-0e13-4dd5-9e28-a840dbbf2674.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/4b412771-021a-4e1a-8e57-d6c23aab7f96.enterpriseapi/avatar"
+      }
+    }, {
+      "title" : "La Quinta Central Reservations",
+      "description" : "La Quinta Central Reservations APIs allows reservation requests and room and hotel availability determinations.",
+      "category" : [ {
+        "value" : "api",
+        "domain" : "uddi:soa.com:resourcetype"
+      }, {
+        "value" : "Public",
+        "domain" : "uddi:soa.com:visibility"
+      } ],
+      "guid" : {
+        "value" : "4b7defb9-6aaf-4778-b9ca-bcd1b9cde55b.enterpriseapi"
+      },
+      "pubDate" : "Wed, 04 Mar 2015 06:29:15 -0700",
+      "EntityReferences" : {
+        "EntityReference" : [ {
+          "Title" : "La Quinta Central Reservations (3.0)",
+          "Guid" : "259d70de-e615-42b3-b7ab-c17092d806ee.enterpriseapi",
+          "Category" : [ {
+            "value" : "apiversion",
+            "domain" : "uddi:soa.com:resourcetype"
+          } ]
+        } ]
+      },
+      "EntityReference" : {
+        "Title" : "La Quinta Central Reservations (3.0)",
+        "Guid" : "259d70de-e615-42b3-b7ab-c17092d806ee.enterpriseapi",
+        "Category" : [ {
+          "value" : "apiversion",
+          "domain" : "uddi:soa.com:resourcetype"
+        } ]
+      },
+      "Image" : {
+        "Url" : "http://ent.akana-dev.net:9900/api/apis/4b7defb9-6aaf-4778-b9ca-bcd1b9cde55b.enterpriseapi/avatars/2d94a245-b2b0-4333-8603-c2c738977fea.png"
+      }
+    } ]
+  },
+  "version" : "1.0"
+}
