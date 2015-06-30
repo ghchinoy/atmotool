@@ -140,7 +140,7 @@ func ZipPredefinedPath(prefix string, dir string) {
 		os.Exit(1)
 	}
 
-	exclusions := []string{".DS_Store", ".zip"}
+	exclusions := []string{".DS_Store", ".zip", ".conf"}
 
 	// Get the file lists
 	resourcesFileList := listFilesInDir(resources_dir, "", exclusions, false)
