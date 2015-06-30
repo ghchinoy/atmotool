@@ -74,7 +74,7 @@ Options:
 `
 	//   atmosphere upload all --config <config> [--dir <dir>]
 
-	arguments, _ := docopt.Parse(usage, nil, true, "1.0.3 cirrus", false)
+	arguments, _ := docopt.Parse(usage, nil, true, "1.1.0 cirrus", false)
 
 	// Debug for command-line args
 	/*
@@ -471,8 +471,8 @@ func download(path string, outputFilename string) {
 		log.Fatalln(err)
 		return
 	}
-	if resp.StatusCode == 401 {
-		log.Fatalln("Unauthorized access to", downloadUri)
+	if resp.StatusCode != 200 {
+		log.Fatalln(resp.StatusCode, "Unauthorized access to", downloadUri)
 		return
 	}
 	defer resp.Body.Close()

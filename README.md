@@ -103,6 +103,11 @@ Looks for and uploads `custom.less`, `PREFIX_resourcesThemeDefault.zip`, `PREFIX
 
 ## Development
 
+
+### 1.1.0
+
+* `download` action, downloads a zip of a `--path`
+
 ### 1.0.2
 
 * `config` flag made optional
