@@ -107,6 +107,7 @@ Looks for and uploads `custom.less`, `PREFIX_resourcesThemeDefault.zip`, `PREFIX
 ### 1.1.1
 
 * fixes issue #5, adds `.conf` to exclude list for zipping, so as not to include `local.conf`
+* fixes issue #6, remove trailing slash from dir when zipping
 
 ### 1.1.0
 
