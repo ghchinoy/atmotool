@@ -2,3 +2,6 @@
 test_*
 testdata
 .DS_Store
+atmotool
+/dist
+man/*.html
