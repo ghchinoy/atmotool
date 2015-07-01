@@ -1,3 +1,4 @@
 *.conf
 test_*
 testdata
+.DS_Store
