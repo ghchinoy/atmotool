@@ -19,12 +19,35 @@ const (
 	chunkSize           = 4096         // 4 KB
 )
 
+var (
+	exclusions = []string{".DS_Store", ".zip", ".conf"}
+)
+
 // filepath WalkFunc doesn't allow custom params
 // This struct will help
 type zipper struct {
 	srcFolder string
 	destFile  string
 	writer    *zip.Writer
+}
+
+func contains(slice []string, item string) bool {
+	ok := false
+	for _, s := range slice {
+		if strings.Contains(item, s) {
+			ok = true
+		}
+	}
+	return ok
+
+	/*
+		set := make(map[string]struct{}, len(slice))
+		for _, s := range slice {
+			set[s] = struct{}{}
+		}
+		_, ok := set[item]
+		return ok
+	*/
 }
 
 func copyContents(r io.Reader, w io.Writer) error {
@@ -64,6 +87,14 @@ func (z *zipper) zipFile(path string, f os.FileInfo, err error) error {
 	if !f.Mode().IsRegular() || f.Size() == 0 {
 		return nil
 	}
+
+	// Exclusions
+	if contains(exclusions, f.Name()) {
+		//if strings.HasSuffix(f.Name(), ".conf") {
+		log.Println("Skipping", f.Name())
+		return nil
+	}
+
 	// open file
 	file, err := os.Open(path)
 	if err != nil {
@@ -114,6 +145,7 @@ func ZipFolder(srcFolder string, destFile string) error {
 	return z.zipFolder()
 }
 
+// unused
 func ZipPredefinedPath(prefix string, dir string) {
 	//fmt.Printf("Zipping '%s' with prefix '%s'\n", dir, prefix)
 
