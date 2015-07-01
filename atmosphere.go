@@ -124,6 +124,7 @@ Options:
 			fn = strings.Replace(dir, ".", "", -1)
 			fn = strings.Replace(fn, "/", "-", -1)
 		}
+		dir = strings.TrimSuffix(dir, "/")
 		fn = prefix + "_" + fn + ".zip"
 		fmt.Printf("Zipping %s as %s...\n", dir, fn)
 
