@@ -24,7 +24,7 @@ Note, no CM context (ex. `/atmosphere` or `/enterpriseapi`).
 
 ## Capabilities - _Working_
 
-### Upload Less file
+### <a name="uploadless"></a>Upload Less file
 
     atmotool upload less <file> [--config <config>]
 
@@ -64,6 +64,32 @@ Example usage creating a single zipfile
 Output would be, in the current working directory:
 
     TEST_-resources-theme-default.zip
+
+### Download a cms path as zip
+
+Downloads a zipfile for the indicated CMS path
+
+    atmotool download --path <path> <filename> [--config <config>]
+
+* path: CM CMS path
+* filename: output filename, does not need `.zip`
+
+Example usage
+
+    atmotool download --path /content/home/landing contentHomeLanding
+
+Output would be a zip file `contentHomeLanding.zip` which will contain a zip of the contents of the CMS directory `/content/home/landing`
+
+
+### Rebuild Styles
+
+Rebuilds the CM styles that already exist for a particular theme; no uploading, see [Upload Less File](#uploadless)
+
+    atmotool rebuild [<theme>] [--config <config>]
+
+* theme: defaults to `default`
+
+
 
 
 ## Capabilities - _Planned_
