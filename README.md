@@ -24,7 +24,7 @@ Note, no CM context (ex. `/atmosphere` or `/enterpriseapi`).
 
 ## Capabilities - _Working_
 
-### <a name="uploadless"></a>Upload Less file
+### Upload Less file
 
     atmotool upload less <file> [--config <config>]
 
