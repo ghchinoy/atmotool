@@ -90,7 +90,18 @@ Rebuilds the CM styles that already exist for a particular theme; no uploading, 
 * theme: defaults to `default`
 
 
+### Reset CM
 
+Deletes a pre-selected list of items in CM to "reset" the UI to default out-of-the-box state.
+
+    atmotool reset [<theme>] [--config <config>]
+
+Items deleted (note the `default` theme is modifiable via flag)
+
+* resources/theme/default/i18n
+* resources/theme/default/style/images/favico.ico
+* resources/theme/default/less/custom.les
+* content/home/landing/index.htm
 
 ## Capabilities - _Planned_
 
@@ -125,33 +136,8 @@ Looks for and uploads `custom.less`, `PREFIX_resourcesThemeDefault.zip`, `PREFIX
 * dir: base directory for the CM customizations to upload, defaults to current directory
 
 
+## Development Notes
 
-
-## Development
-
-
-### 1.1.1
-
-* fixes issue #5, adds `.conf` to exclude list for zipping, so as not to include `local.conf`
-* fixes issue #6, remove trailing slash from dir when zipping
-
-### 1.1.0
-
-* `download` action, downloads a zip of a `--path`
-
-### 1.0.2
-
-* `config` flag made optional
-
-### 1.0.1
-
-* uploads files
-
-### 1.0.0
-
-* uploads less
-
-### Notes
 
 Using `docopt.org` for command line argument processing
 
