@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"strconv"
 
 	"bitbucket.org/apihussain/atmotool/cm"
 	"bitbucket.org/apihussain/atmotool/zip"
@@ -49,6 +50,7 @@ const (
 	CM_Favicon              = "/style/images/favicon.ico"
 	CM_CustomLessURI        = "/resources/theme/default/less?unpack=false"
 	CM_ListAPIsURI          = "/api/apis"
+	CMListAppsURI           = "/api/apps"
 )
 
 var (
@@ -67,6 +69,7 @@ Usage:
   atmotool upload file --path <path> <files>... [--config <config>]
   atmotool download --path <path> <filename> [--config <config>]
   atmotool list apis [--config <config>]
+  atmotool list apps [--config <config>]
   atmotool list policies [--config <config>]
   atmotool rebuild [<theme>] [--config <config>]
   atmotool reset [<theme>] [--config <config>]
@@ -82,7 +85,7 @@ Options:
 `
 	//   atmotool upload all --config <config> [--dir <dir>]
 
-	arguments, _ := docopt.Parse(usage, nil, true, "1.3.0 cirrus", false)
+	arguments, _ := docopt.Parse(usage, nil, true, "1.3.1 cirrus", false)
 
 	// Debug for command-line args
 	/*
@@ -168,6 +171,8 @@ Options:
 			listPolicies()
 		} else if arguments["apis"] == true {
 			listApis()
+		} else if arguments["apps"] == true {
+			listApps()
 		}
 	} else if arguments["download"] == true {
 		// Download path as filename.zip
@@ -249,6 +254,47 @@ func callDeleteURL(urlStr string) error {
 		return err
 	}
 	log.Println("Delete:", resp.Status)
+
+	return nil
+}
+
+func listApps() error {
+	log.Println("Listing Apps")
+
+	err := loginToCM()
+	if err != nil {
+		log.Fatalln(err)
+		return err
+	}
+
+	url := config.Url + CMListAppsURI
+
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Add("Accept", "application/json")
+	resp, err := client.Do(req)
+
+	defer resp.Body.Close()
+
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	log.Printf("%s", bodyBytes)
+	var apps cm.ApisResponse
+	err = json.Unmarshal(bodyBytes, &apps)
+	log.Printf("Found %v Apps", len(apps.Channel.Items))
+
+	var appList []Api
+
+	for _, v := range apps.Channel.Items {
+		appList = append(appList, Api{Name: v.EntityReference.Title})
+	}
+	jsonBytes, err := json.Marshal(appList)
+	if err != nil {
+		log.Printf("Unable to marshall appList to json")
+	}
+	fmt.Printf("%s", jsonBytes)
 
 	return nil
 }
@@ -444,14 +490,25 @@ func loginToCM() error {
 // Call CM Rebuild Styles
 func rebuildStyles(theme string) error {
 
+	err := loginToCM()
+	if err != nil {
+		log.Fatalln(err)
+		return err
+	}
 	// call rebuild styles API
 	// POST CM_URI/resources/branding/generatestyles
 	// Form Data
 	// theme: default
 	log.Println("Rebuilding styles...")
 	rebuildStylesUri := config.Url + "/resources/branding/generatestyles"
-	resp, err := http.PostForm(rebuildStylesUri, url.Values{"theme": {theme}})
+	postdata := url.Values{}
+	postdata.Set("theme", theme)
 
+	req, _ := http.NewRequest("POST", rebuildStylesUri, bytes.NewBufferString(postdata.Encode()))
+	req.Header.Add("Content-Length",  strconv.Itoa( len(postdata.Encode()) ) )
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	resp, err := client.Do(req)
+	
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
@@ -459,6 +516,7 @@ func rebuildStyles(theme string) error {
 	}
 	var results map[string]interface{}
 	err = json.Unmarshal(data, &results)
+	//log.Println(resp.Status, results)
 	status := results["result"]
 	log.Printf("Rebuild styles: %s", status)
 	return nil
