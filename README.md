@@ -3,25 +3,6 @@
 A command-line tool to manage Community Manager.
 
 
-## Installation
-
-Clone git repo to `$GOPATH/src/bitbucket.org/apihussain` then `cd atmotool`
-
-    go get github.com/docopt/docopt-go
-    go install
-
-Requires a config file (typically called _environment_`.config`, ex. `local.config` or `eap.config`) that contains CM url, username, and password, in JSON format:
-
-```
-{
-	"url": "http://local.cm.demo:9900",
-	"email": "administrator@cm.demo",
-	"password": "password"
-}
-```
-
-Note, no CM context (ex. `/atmosphere` or `/enterpriseapi`).
-
 ## Capabilities - _Working_
 
 ### Upload Less file
@@ -134,6 +115,27 @@ Looks for and uploads `custom.less`, `PREFIX_resourcesThemeDefault.zip`, `PREFIX
 
 * config: config file, as above
 * dir: base directory for the CM customizations to upload, defaults to current directory
+
+
+## Installation
+
+Clone git repo to `$GOPATH/src/bitbucket.org/apihussain` then `cd atmotool`
+
+    go get github.com/docopt/docopt-go
+    go install
+
+Requires a config file (typically called _environment_`.config`, ex. `local.config` or `eap.config`) that contains CM url, username, and password, in JSON format:
+
+```
+{
+    "url": "http://local.cm.demo:9900",
+    "email": "administrator@cm.demo",
+    "password": "password"
+}
+```
+
+Note, no CM context (ex. `/atmosphere` or `/enterpriseapi`).
+
 
 
 ## Development Notes

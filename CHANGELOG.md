@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.3.1 20150918
+
+* Login now occurs prior to rebuilding styles
+* added a Go cross-compile script for ease of building releases
+
 ### 1.3.0 20150810
 * added `reset` action to reset CM to blank (i18n, favicon, landing/index.htm, and custom.less)
 
