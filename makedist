@@ -1,0 +1,32 @@
+#!/bin/bash
+# Go cross-compile 
+# Usually, only the VERSION changes.
+# The OSLIST and ARCHLIST can change, as well.
+# No need to change anything below ####
+# 
+
+VERSION=1.3.1
+
+OSLIST=(linux darwin windows)
+ARCHLIST=(amd64 386)
+
+####
+
+DISTDIR=dist/${VERSION}
+mkdir -p ${DISTDIR}
+
+echo "Compiling version ${VERSION}:"
+for os in ${OSLIST[*]}; do
+  for arch in ${ARCHLIST[*]}; do
+  	EXT=""
+  	if [[ ${os} == "windows" ]]; then
+  		EXT=".exe"
+  	fi
+  	GOOS=${os}
+  	GOARCH=${arch}
+  	echo "Compiling ${GOOS}/${GOARCH}..."
+  	OUTPUTFILE=${DISTDIR}/atmotool-${VERSION}-${GOOS}.${GOARCH}${EXT}
+    GOOS=${GOOS} GOARCH=${GOARCH} go build -o ${OUTPUTFILE} atmotool.go
+    file ${OUTPUTFILE}
+  done
+done
