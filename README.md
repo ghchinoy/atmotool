@@ -2,6 +2,20 @@
 
 A command-line tool to manage Community Manager.
 
+```
+Usage:
+  atmotool zip --prefix <prefix> <dir>
+  atmotool upload less <file> [--config <config>]
+  atmotool upload file --path <path> <files>... [--config <config>]
+  atmotool download --path <path> <filename> [--config <config>]
+  atmotool list apis [--config <config>]
+  atmotool list apps [--config <config>]
+  atmotool list policies [--config <config>]
+  atmotool rebuild [<theme>] [--config <config>]
+  atmotool reset [<theme>] [--config <config>]
+  atmotool -h | --help
+  atmotool --version
+```
 
 ## Capabilities - _Working_
 
