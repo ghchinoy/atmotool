@@ -1,6 +1,6 @@
-# Akana Community Manager Customizer
+# Akana Community Manager CLI
 
-A tool to customize Akana's Community Manager.
+A command-line tool to manage Community Manager.
 
 
 ## Installation
