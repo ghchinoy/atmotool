@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.3.2 20151116
+
+* Changed how login is handled (returns http.Client)
+
 ### 1.3.1 20150918
 
 * Login now occurs prior to rebuilding styles

@@ -12,8 +12,8 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"strings"
 	"strconv"
+	"strings"
 
 	"bitbucket.org/apihussain/atmotool/cm"
 	"bitbucket.org/apihussain/atmotool/zip"
@@ -21,6 +21,11 @@ import (
 	"bytes"
 
 	"github.com/docopt/docopt-go"
+)
+
+const (
+	version     = "1.3.2"
+	versionName = "cirrus"
 )
 
 // Configuration provides a simple struct to hold login info
@@ -44,13 +49,14 @@ type Api struct {
 }
 
 const (
-	CM_LandingIndex         = "/content/home/landing/index.htm"
-	CM_Internationalization = "/i18n"
-	CM_CustomLess           = "/less/custom.less"
-	CM_Favicon              = "/style/images/favicon.ico"
-	CM_CustomLessURI        = "/resources/theme/default/less?unpack=false"
-	CM_ListAPIsURI          = "/api/apis"
-	CMListAppsURI           = "/api/apps"
+	CMLandingIndex         = "/content/home/landing/index.htm"
+	CMInternationalization = "/i18n"
+	CMCustomLess           = "/less/custom.less"
+	CMFavicon              = "/style/images/favicon.ico"
+	CMCustomLessURI        = "/resources/theme/default/less?unpack=false"
+	CMListAPIsURI          = "/api/apis"
+	CMListAppsURI          = "/api/apps"
+	CMListPoliciesURI      = "/api/policies"
 )
 
 var (
@@ -85,7 +91,7 @@ Options:
 `
 	//   atmotool upload all --config <config> [--dir <dir>]
 
-	arguments, _ := docopt.Parse(usage, nil, true, "1.3.1 cirrus", false)
+	arguments, _ := docopt.Parse(usage, nil, true, version+" "+versionName, false)
 
 	// Debug for command-line args
 	/*
@@ -215,23 +221,23 @@ Options:
 // content or resource directory
 func resetCM(theme string) error {
 
-	err := loginToCM()
+	client, err := loginToCM()
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
 
 	urls := []string{
-		CM_LandingIndex,
-		"/resources/theme/" + theme + CM_Internationalization,
-		"/resources/theme/" + theme + CM_CustomLess,
-		"/resources/theme/" + theme + CM_Favicon,
+		CMLandingIndex,
+		"/resources/theme/" + theme + CMInternationalization,
+		"/resources/theme/" + theme + CMCustomLess,
+		"/resources/theme/" + theme + CMFavicon,
 	}
 
 	for _, url := range urls {
 		urlStr := config.Url + url
 		log.Println("Deleting", url)
-		err := callDeleteURL(urlStr)
+		err := callDeleteURL(client, urlStr)
 		if err != nil {
 			return err
 		}
@@ -242,10 +248,10 @@ func resetCM(theme string) error {
 
 // Used by resetCM, this is called multiple times to delete
 // a specific url
-func callDeleteURL(urlStr string) error {
+func callDeleteURL(client *http.Client, urlStr string) error {
 
-	client := &http.Client{}
-	client.Jar = jar
+	//client := &http.Client{}
+	//client.Jar = jar
 	req, err := http.NewRequest("DELETE", urlStr, nil)
 	resp, err := client.Do(req)
 	defer resp.Body.Close()
@@ -261,7 +267,7 @@ func callDeleteURL(urlStr string) error {
 func listApps() error {
 	log.Println("Listing Apps")
 
-	err := loginToCM()
+	client, err := loginToCM()
 	if err != nil {
 		log.Fatalln(err)
 		return err
@@ -269,7 +275,7 @@ func listApps() error {
 
 	url := config.Url + CMListAppsURI
 
-	client := &http.Client{}
+	//client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/json")
 	resp, err := client.Do(req)
@@ -303,15 +309,15 @@ func listApis() error {
 	//var request *http.Request
 	log.Println("Listing APIs")
 
-	err := loginToCM()
+	client, err := loginToCM()
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
 
-	url := config.Url + CM_ListAPIsURI
+	url := config.Url + CMListAPIsURI
 
-	client := &http.Client{}
+	//client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/json")
 	resp, err := client.Do(req)
@@ -344,6 +350,30 @@ func listApis() error {
 
 func listPolicies() error {
 	log.Println("Listing Policies")
+
+	client, err := loginToCM()
+	if err != nil {
+		log.Fatalln(err)
+		return err
+	}
+
+	url := config.Url + CMListPoliciesURI
+
+	//client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Add("Accept", "application/json")
+	resp, err := client.Do(req)
+
+	defer resp.Body.Close()
+
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	//var policies cm.PoliciesResponse
+
+	log.Printf("%s", bodyBytes)
+
 	return nil
 }
 
@@ -380,10 +410,11 @@ func initializeConfiguration(configLocation string) error {
 }
 
 // Convenience method
+// TODO review this - http client created, but not used?
 func uploadLessFile(uploadFilePath string, config Configuration) {
 	log.Printf("Uploading Less file %s to %s\n", uploadFilePath, config.Url)
 
-	err := loginToCM()
+	_, err := loginToCM()
 	if err != nil {
 		log.Fatalln(err)
 		return
@@ -394,7 +425,7 @@ func uploadLessFile(uploadFilePath string, config Configuration) {
 	extraParams := map[string]string{
 		"none": "really",
 	}
-	uploadUri := config.Url + CM_CustomLessURI
+	uploadUri := config.Url + CMCustomLessURI
 
 	statusCode, err := uploadFile(uploadFilePath, extraParams, uploadUri)
 	if err != nil {
@@ -452,7 +483,7 @@ func uploadFile(uploadFilePath string, extras map[string]string, uploadUri strin
 	return uploadStatus, nil
 }
 
-func loginToCM() error {
+func loginToCM() (*http.Client, error) {
 	// Login
 	log.Println("Logging in...")
 	client = &http.Client{}
@@ -460,37 +491,37 @@ func loginToCM() error {
 	jar, err = cookiejar.New(nil)
 	if err != nil {
 		log.Fatalln(err)
-		return err
+		return client, err
 	}
 	client.Jar = jar
 
-	loginUri := config.Url + "/api/login"
+	loginURI := config.Url + "/api/login"
 	auth := Auth{config.Email, config.Password}
 	buf, err := json.Marshal(auth)
 	if err != nil {
 		log.Fatalln(err)
-		return err
+		return client, err
 	}
-	req, err := http.NewRequest("POST", loginUri, bytes.NewReader(buf))
+	req, err := http.NewRequest("POST", loginURI, bytes.NewReader(buf))
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatalln(err)
-		return err
+		return client, err
 	}
 	if resp.StatusCode != 200 {
 		log.Printf("Login %s", resp.Status)
 	}
 
-	return nil
+	return client, nil
 }
 
 // Call CM Rebuild Styles
 func rebuildStyles(theme string) error {
 
-	err := loginToCM()
+	client, err := loginToCM()
 	if err != nil {
 		log.Fatalln(err)
 		return err
@@ -505,10 +536,10 @@ func rebuildStyles(theme string) error {
 	postdata.Set("theme", theme)
 
 	req, _ := http.NewRequest("POST", rebuildStylesUri, bytes.NewBufferString(postdata.Encode()))
-	req.Header.Add("Content-Length",  strconv.Itoa( len(postdata.Encode()) ) )
+	req.Header.Add("Content-Length", strconv.Itoa(len(postdata.Encode())))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := client.Do(req)
-	
+
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
@@ -575,7 +606,7 @@ func uploadAllHelper(dir string, config Configuration) {
 func download(path string, outputFilename string) {
 	fmt.Printf("Downloading CMS path %s to file %s\n", path, outputFilename)
 
-	err := loginToCM()
+	client, err := loginToCM()
 	if err != nil {
 		log.Fatalln(err)
 		return
@@ -619,12 +650,13 @@ func download(path string, outputFilename string) {
 }
 
 // basic upload to CMS
+// TODO review this - http client created but not used?
 func upload(files []string, config Configuration, path string) {
 	fmt.Printf("Uploading to %s cms location %s these: %s\n", config.Url, path, files)
 	// upload FILE to CMS path PATH
 	// iterate through []FILE
 
-	err := loginToCM()
+	_, err := loginToCM()
 	if err != nil {
 		log.Fatalln(err)
 		return
