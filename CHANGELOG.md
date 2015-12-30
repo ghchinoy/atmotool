@@ -1,5 +1,15 @@
 # Changelog
 
+### 1.3.4 20151230
+
+* added a debugging function curlThis() which outputs the equivalent curl command
+* added an unused method called listUsers() - there's no equivalent CM API that lists all users, and will remove this in the future
+
+### 1.3.3 20151116
+
+* Changed file upload methods to use logged in http.Client
+* Added query param Type with proper values to 'list policies' method
+
 ### 1.3.2 20151116
 
 * Changed how login is handled (returns http.Client)

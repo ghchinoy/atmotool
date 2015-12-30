@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	version     = "1.3.2"
+	version     = "1.3.4"
 	versionName = "cirrus"
 )
 
@@ -33,6 +33,7 @@ type Configuration struct {
 	Url      string `json:"url"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	Theme    string `json:"theme"`
 }
 
 // Auth is another simple struct
@@ -53,10 +54,12 @@ const (
 	CMInternationalization = "/i18n"
 	CMCustomLess           = "/less/custom.less"
 	CMFavicon              = "/style/images/favicon.ico"
-	CMCustomLessURI        = "/resources/theme/default/less?unpack=false"
-	CMListAPIsURI          = "/api/apis"
-	CMListAppsURI          = "/api/apps"
-	CMListPoliciesURI      = "/api/policies"
+	// CMCustomLessURI should be a template, subsitute in Configuration.Theme
+	CMCustomLessURI   = "/resources/theme/default/less?unpack=false"
+	CMListAPIsURI     = "/api/apis"
+	CMListAppsURI     = "/api/apps"
+	CMListPoliciesURI = "/api/policies"
+	CMListUsersURI    = "/api/users"
 )
 
 var (
@@ -217,7 +220,7 @@ Options:
 	}
 }
 
-// this function deletes an array of items in a CM
+// resetCM deletes an array of items in a CM
 // content or resource directory
 func resetCM(theme string) error {
 
@@ -264,6 +267,23 @@ func callDeleteURL(client *http.Client, urlStr string) error {
 	return nil
 }
 
+// curlThis takes an http.Client and http.Request and outputs the
+// equivalent cURL command, to be used elsewhere.
+func curlThis(client *http.Client, req *http.Request) string {
+	curl := "curl -v"
+	for _, v := range client.Jar.Cookies(req.URL) {
+		curl += fmt.Sprintf(" --cookie \"%s\"", v)
+	}
+	for k, v := range req.Header {
+		for _, hv := range v {
+			curl += fmt.Sprintf(" -H \"%s:%v\"", k, hv)
+		}
+	}
+	curl += fmt.Sprintf(" %s", req.URL)
+
+	return curl
+}
+
 func listApps() error {
 	log.Println("Listing Apps")
 
@@ -275,9 +295,9 @@ func listApps() error {
 
 	url := config.Url + CMListAppsURI
 
-	//client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/json")
+
 	resp, err := client.Do(req)
 
 	defer resp.Body.Close()
@@ -305,6 +325,32 @@ func listApps() error {
 	return nil
 }
 
+func listUsers() error {
+	log.Println("Listing Users")
+
+	client, err := loginToCM()
+	if err != nil {
+		return err
+	}
+
+	url := config.Url + CMListUsersURI
+
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Add("Accept", "application/json")
+	log.Println("curl command:", curlThis(client, req))
+	resp, err := client.Do(req)
+	defer resp.Body.Close()
+
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	log.Println("%s", bodyBytes)
+
+	return nil
+}
+
 func listApis() error {
 	//var request *http.Request
 	log.Println("Listing APIs")
@@ -320,6 +366,7 @@ func listApis() error {
 	//client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/json")
+	log.Println("curl command:", curlThis(client, req))
 	resp, err := client.Do(req)
 
 	defer resp.Body.Close()
@@ -348,6 +395,8 @@ func listApis() error {
 	return nil
 }
 
+// incomplete - list raw json of policies
+// should show a more human readable output
 func listPolicies() error {
 	log.Println("Listing Policies")
 
@@ -357,22 +406,36 @@ func listPolicies() error {
 		return err
 	}
 
-	url := config.Url + CMListPoliciesURI
+	policyTypes := []string{"Operational Policy", "Denial of Service", "Compliance Policy", "Service Level Policy"}
 
-	//client := &http.Client{}
-	req, err := http.NewRequest("GET", url, nil)
-	req.Header.Add("Accept", "application/json")
-	resp, err := client.Do(req)
+	for _, policyType := range policyTypes {
+		log.Printf("%s\n", policyType)
+		url := config.Url + CMListPoliciesURI + "?Type=" + url.QueryEscape(policyType)
+		//log.Printf("* %s\n", url)
 
-	defer resp.Body.Close()
+		//client := &http.Client{}
+		req, err := http.NewRequest("GET", url, nil)
+		req.Header.Add("Accept", "application/json")
+		resp, err := client.Do(req)
 
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
+		defer resp.Body.Close()
+
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		var policies cm.ApisResponse
+		err = json.Unmarshal(bodyBytes, &policies)
+		log.Println("Found", len(policies.Channel.Items), " policies.")
+
+		if len(policies.Channel.Items) > 1 {
+			//log.Printf("%s", bodyBytes)
+			for _, v := range policies.Channel.Items {
+				fmt.Printf("\"%s\" (%s)\n", v.Title, v.Guid.Value)
+			}
+		}
+
 	}
-	//var policies cm.PoliciesResponse
-
-	log.Printf("%s", bodyBytes)
 
 	return nil
 }
@@ -414,7 +477,7 @@ func initializeConfiguration(configLocation string) error {
 func uploadLessFile(uploadFilePath string, config Configuration) {
 	log.Printf("Uploading Less file %s to %s\n", uploadFilePath, config.Url)
 
-	_, err := loginToCM()
+	client, err := loginToCM()
 	if err != nil {
 		log.Fatalln(err)
 		return
@@ -426,8 +489,11 @@ func uploadLessFile(uploadFilePath string, config Configuration) {
 		"none": "really",
 	}
 	uploadUri := config.Url + CMCustomLessURI
+	if config.Theme != "" {
+		uploadUri = config.Url + "/resources/theme/" + config.Theme + "/less?unpack=false"
+	}
 
-	statusCode, err := uploadFile(uploadFilePath, extraParams, uploadUri)
+	statusCode, err := uploadFile(client, uploadFilePath, extraParams, uploadUri)
 	if err != nil {
 		log.Fatalf("Issues. %v : %s", statusCode, err)
 	}
@@ -442,10 +508,10 @@ func uploadLessFile(uploadFilePath string, config Configuration) {
 	}
 }
 
-func uploadFile(uploadFilePath string, extras map[string]string, uploadUri string) (int, error) {
+func uploadFile(client *http.Client, uploadFilePath string, extras map[string]string, uploadUri string) (int, error) {
 	var uploadStatus int
 
-	var request *http.Request
+	//var request *http.Request
 	request, err := newFileUploadRequest(uploadUri, extras, "File", uploadFilePath)
 	if err != nil {
 		log.Fatalln(err)
@@ -455,8 +521,10 @@ func uploadFile(uploadFilePath string, extras map[string]string, uploadUri strin
 
 	// debug
 
+	log.Println("* URL", uploadUri)
+	log.Println("* Upload Path", uploadFilePath)
 	for k, v := range request.Header {
-		log.Printf("%s : %s", k, v)
+		log.Printf("* %s: %s", k, v)
 	}
 
 	resp, err := client.Do(request)
@@ -475,12 +543,62 @@ func uploadFile(uploadFilePath string, extras map[string]string, uploadUri strin
 
 		if uploadStatus != 200 {
 			b, _ := ioutil.ReadAll(body)
-			log.Println(string(b))
+			log.Println("* uploadFile", string(b))
 		}
 
 		//log.Printf("Upload status %v", resp.StatusCode)
 	}
 	return uploadStatus, nil
+}
+
+func newFileUploadRequest(uri string, params map[string]string, paramName string, path string) (*http.Request, error) {
+
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	part, err := writer.CreateFormFile(paramName, filepath.Base(path))
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = io.Copy(part, file)
+	if err != nil {
+		log.Fatalln(err)
+		return nil, err
+	}
+
+	/*
+		// for any extra params, map of string keys and vals
+			for key, val := range params {
+				_ = writer.WriteField(key, val)
+			}
+	*/
+
+	err = writer.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	req, _ := http.NewRequest("POST", uri, body)
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	return req, nil
+}
+
+// Convenience method
+// TODO
+// upload PREFIX_resourcesThemeDefault.zip to CMS /resources/theme/default
+// upload PREFIX_contentHomeLanding.zip to CMS /content/home/landing
+// upload less file to CMS ??
+// call rebuild styles API
+func uploadAllHelper(dir string, config Configuration) {
+	fmt.Printf("Uploading all in %s to %s\n", dir, config.Url)
 }
 
 func loginToCM() (*http.Client, error) {
@@ -553,55 +671,6 @@ func rebuildStyles(theme string) error {
 	return nil
 }
 
-func newFileUploadRequest(uri string, params map[string]string, paramName string, path string) (*http.Request, error) {
-
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-
-	part, err := writer.CreateFormFile(paramName, filepath.Base(path))
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = io.Copy(part, file)
-	if err != nil {
-		log.Fatalln(err)
-		return nil, err
-	}
-
-	/*
-		for key, val := range params {
-			_ = writer.WriteField(key, val)
-		}
-	*/
-
-	err = writer.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	req, _ := http.NewRequest("POST", uri, body)
-	req.Header.Add("Content-Type", writer.FormDataContentType())
-
-	return req, nil
-}
-
-// Convenience method
-// TODO
-// upload PREFIX_resourcesThemeDefault.zip to CMS /resources/theme/default
-// upload PREFIX_contentHomeLanding.zip to CMS /content/home/landing
-// upload less file to CMS ??
-// call rebuild styles API
-func uploadAllHelper(dir string, config Configuration) {
-	fmt.Printf("Uploading all in %s to %s\n", dir, config.Url)
-}
-
 // Download a CMS path to file
 func download(path string, outputFilename string) {
 	fmt.Printf("Downloading CMS path %s to file %s\n", path, outputFilename)
@@ -656,7 +725,7 @@ func upload(files []string, config Configuration, path string) {
 	// upload FILE to CMS path PATH
 	// iterate through []FILE
 
-	_, err := loginToCM()
+	client, err := loginToCM()
 	if err != nil {
 		log.Fatalln(err)
 		return
@@ -674,7 +743,7 @@ func upload(files []string, config Configuration, path string) {
 			uploadUri += "?unpack=true"
 		}
 		//log.Println(uploadUri)
-		statusCode, err := uploadFile(v, extraParams, uploadUri)
+		statusCode, err := uploadFile(client, v, extraParams, uploadUri)
 		if err != nil {
 			log.Fatalf("Issues. %v : %s", statusCode, err)
 		}
