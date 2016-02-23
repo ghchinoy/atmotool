@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -24,7 +25,7 @@ import (
 )
 
 const (
-	version     = "1.3.4"
+	version     = "1.4.0"
 	versionName = "cirrus"
 )
 
@@ -165,7 +166,10 @@ Options:
 
 		log.Println("Rebuilding styles for theme:", theme)
 
-		rebuildStyles(theme)
+		err = rebuildStyles(theme)
+		if err != nil {
+			log.Println(err)
+		}
 	} else if arguments["list"] == true {
 		// List policies
 		// List APIs
@@ -235,6 +239,9 @@ func resetCM(theme string) error {
 		"/resources/theme/" + theme + CMInternationalization,
 		"/resources/theme/" + theme + CMCustomLess,
 		"/resources/theme/" + theme + CMFavicon,
+		"/resources/theme/" + theme + "/SOA",
+		"/resources/theme/" + theme + "/less",
+		"/resources/theme/" + theme + "/style",
 	}
 
 	for _, url := range urls {
@@ -256,6 +263,7 @@ func callDeleteURL(client *http.Client, urlStr string) error {
 	//client := &http.Client{}
 	//client.Jar = jar
 	req, err := http.NewRequest("DELETE", urlStr, nil)
+	addCsrfHeader(req, client)
 	resp, err := client.Do(req)
 	defer resp.Body.Close()
 	//bodyBytes, err := ioutil.ReadAll(resp.Body)
@@ -272,7 +280,11 @@ func callDeleteURL(client *http.Client, urlStr string) error {
 func curlThis(client *http.Client, req *http.Request) string {
 	curl := "curl -v"
 	for _, v := range client.Jar.Cookies(req.URL) {
-		curl += fmt.Sprintf(" --cookie \"%s\"", v)
+		if strings.HasPrefix(v.Name, "Csrf-Token") {
+			curl += fmt.Sprintf(" -H \"X-%s: %s\"", v.Name, v.Value)
+		} else {
+			curl += fmt.Sprintf(" --cookie \"%s\"", v)
+		}
 	}
 	for k, v := range req.Header {
 		for _, hv := range v {
@@ -284,6 +296,7 @@ func curlThis(client *http.Client, req *http.Request) string {
 	return curl
 }
 
+// May not work with 8.0, /api/apps removed?
 func listApps() error {
 	log.Println("Listing Apps")
 
@@ -518,14 +531,16 @@ func uploadFile(client *http.Client, uploadFilePath string, extras map[string]st
 		return uploadStatus, err
 	}
 	request.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+	addCsrfHeader(request, client)
 
 	// debug
-
-	log.Println("* URL", uploadUri)
-	log.Println("* Upload Path", uploadFilePath)
-	for k, v := range request.Header {
-		log.Printf("* %s: %s", k, v)
-	}
+	/*
+		log.Println("* URL", uploadUri)
+		log.Println("* Upload Path", uploadFilePath)
+		for k, v := range request.Header {
+			log.Printf("* %s: %s", k, v)
+		}
+	*/
 
 	resp, err := client.Do(request)
 	if err != nil {
@@ -633,7 +648,27 @@ func loginToCM() (*http.Client, error) {
 		log.Printf("Login %s", resp.Status)
 	}
 
+	// debug
+	/*
+		log.Println(">>> DEBUG >>>")
+		for k, v := range resp.Header {
+			log.Printf("%s : %s", k, v)
+		}
+		log.Println("<<< DEBUG <<<")
+	*/
+
 	return client, nil
+}
+
+// checks to see if cookie jar has Csrf and adds it as a header
+func addCsrfHeader(req *http.Request, client *http.Client) *http.Request {
+	for _, v := range client.Jar.Cookies(req.URL) {
+		if strings.HasPrefix(v.Name, "Csrf-Token") {
+			req.Header.Add("X-"+v.Name, v.Value)
+		}
+	}
+	req.Header.Add("Atmotool", version)
+	return req
 }
 
 // Call CM Rebuild Styles
@@ -649,13 +684,14 @@ func rebuildStyles(theme string) error {
 	// Form Data
 	// theme: default
 	log.Println("Rebuilding styles...")
-	rebuildStylesUri := config.Url + "/resources/branding/generatestyles"
+	rebuildStylesURI := config.Url + "/resources/branding/generatestyles"
 	postdata := url.Values{}
 	postdata.Set("theme", theme)
 
-	req, _ := http.NewRequest("POST", rebuildStylesUri, bytes.NewBufferString(postdata.Encode()))
+	req, _ := http.NewRequest("POST", rebuildStylesURI, bytes.NewBufferString(postdata.Encode()))
 	req.Header.Add("Content-Length", strconv.Itoa(len(postdata.Encode())))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	addCsrfHeader(req, client)
 	resp, err := client.Do(req)
 
 	data, err := ioutil.ReadAll(resp.Body)
@@ -663,9 +699,13 @@ func rebuildStyles(theme string) error {
 		log.Fatalln(err)
 		return err
 	}
+	if resp.StatusCode != 200 {
+		//log.Println(resp.StatusCode, resp.StatusCode)
+		return errors.New("Unauthorized - Please check API's CSRF needs.")
+	}
+
 	var results map[string]interface{}
 	err = json.Unmarshal(data, &results)
-	//log.Println(resp.Status, results)
 	status := results["result"]
 	log.Printf("Rebuild styles: %s", status)
 	return nil
