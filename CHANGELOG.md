@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.4.0 20160222
+
+* CSRF now properly implemented
+
 ### 1.3.4 20151230
 
 * added a debugging function curlThis() which outputs the equivalent curl command
