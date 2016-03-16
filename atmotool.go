@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	version     = "1.4.0"
+	version     = "1.4.3"
 	versionName = "cirrus"
 )
 
@@ -60,13 +60,14 @@ const (
 	CMListAPIsURI     = "/api/apis"
 	CMListAppsURI     = "/api/apps"
 	CMListPoliciesURI = "/api/policies"
-	CMListUsersURI    = "/api/users"
+	CMListUsersURI    = "/api/search?sort=asc&sortBy=com.soa.sort.order.title_sort&Federation=false&count=20&start=0&q=type:user"
 )
 
 var (
 	config Configuration
 	client *http.Client
 	jar    http.CookieJar
+	debug  bool
 )
 
 func main() {
@@ -75,14 +76,15 @@ func main() {
 
 Usage:
   atmotool zip --prefix <prefix> <dir>
-  atmotool upload less <file> [--config <config>]
-  atmotool upload file --path <path> <files>... [--config <config>]
-  atmotool download --path <path> <filename> [--config <config>]
-  atmotool list apis [--config <config>]
-  atmotool list apps [--config <config>]
-  atmotool list policies [--config <config>]
-  atmotool rebuild [<theme>] [--config <config>]
-  atmotool reset [<theme>] [--config <config>]
+  atmotool upload less <file> [--config <config>] [--debug]
+  atmotool upload file --path <path> <files>... [--config <config>] [--debug]
+  atmotool download --path <path> <filename> [--config <config>] [--debug]
+  atmotool list apis [--config <config>] [--debug]
+  atmotool list apps [--config <config>] [--debug]
+  atmotool list users [--config <config>] [--debug]
+  atmotool list policies [--config <config>] [--debug]
+  atmotool rebuild [<theme>] [--config <config>] [--debug]
+  atmotool reset [<theme>] [--config <config>] [--debug]
   atmotool -h | --help
   atmotool --version
 
@@ -111,6 +113,11 @@ Options:
 	*/
 
 	// convert to switch?
+
+	if arguments["--debug"] == true {
+		debug = true
+		log.Println("Debug output requested.")
+	}
 
 	if arguments["upload"] == true {
 		configLocation, _ := arguments["--config"].(string)
@@ -186,6 +193,8 @@ Options:
 			listApis()
 		} else if arguments["apps"] == true {
 			listApps()
+		} else if arguments["users"] == true {
+			listUsers()
 		}
 	} else if arguments["download"] == true {
 		// Download path as filename.zip
@@ -359,7 +368,7 @@ func listUsers() error {
 		return err
 	}
 
-	log.Println("%s", bodyBytes)
+	log.Printf("%s", bodyBytes)
 
 	return nil
 }
@@ -534,13 +543,13 @@ func uploadFile(client *http.Client, uploadFilePath string, extras map[string]st
 	addCsrfHeader(request, client)
 
 	// debug
-	/*
+	if debug {
 		log.Println("* URL", uploadUri)
 		log.Println("* Upload Path", uploadFilePath)
 		for k, v := range request.Header {
 			log.Printf("* %s: %s", k, v)
 		}
-	*/
+	}
 
 	resp, err := client.Do(request)
 	if err != nil {
@@ -618,7 +627,9 @@ func uploadAllHelper(dir string, config Configuration) {
 
 func loginToCM() (*http.Client, error) {
 	// Login
-	log.Println("Logging in...")
+	if debug {
+		log.Println("Logging in...")
+	}
 	client = &http.Client{}
 	var err error
 	jar, err = cookiejar.New(nil)
@@ -649,13 +660,13 @@ func loginToCM() (*http.Client, error) {
 	}
 
 	// debug
-	/*
+	if debug {
 		log.Println(">>> DEBUG >>>")
 		for k, v := range resp.Header {
 			log.Printf("%s : %s", k, v)
 		}
 		log.Println("<<< DEBUG <<<")
-	*/
+	}
 
 	return client, nil
 }
@@ -700,8 +711,10 @@ func rebuildStyles(theme string) error {
 		return err
 	}
 	if resp.StatusCode != 200 {
-		//log.Println(resp.StatusCode, resp.StatusCode)
-		return errors.New("Unauthorized - Please check API's CSRF needs.")
+		if debug {
+			log.Println(resp.StatusCode, resp.Status)
+		}
+		return errors.New("Unable to parse less file. " + resp.Status + " when calling " + rebuildStylesURI)
 	}
 
 	var results map[string]interface{}

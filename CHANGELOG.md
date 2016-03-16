@@ -1,5 +1,17 @@
 # Changelog
 
+### 1.4.3 20160316
+
+* added listUsers which uses `/api/search` to list users, outputs json.
+
+### 1.4.2 20160314
+
+* debug statements in loginToCM and uploadFile available via `--debug` flag
+
+### 1.4.1 20160226
+
+* `--debug` flag added for more verbose output; relegated some existing output to behind debug fence
+
 ### 1.4.0 20160222
 
 * CSRF now properly implemented
