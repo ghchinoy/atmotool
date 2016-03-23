@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.4.4 20160322
+
+* added `list topapis` which makes a call to `/api/businesses/tenantbusiness.enterpriseapi/metrics`
+
 ### 1.4.3 20160316
 
 * added listUsers which uses `/api/search` to list users, outputs json.

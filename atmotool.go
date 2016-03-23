@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	version     = "1.4.3"
+	version     = "1.4.4"
 	versionName = "cirrus"
 )
 
@@ -58,7 +58,7 @@ const (
 	// CMCustomLessURI should be a template, subsitute in Configuration.Theme
 	CMCustomLessURI   = "/resources/theme/default/less?unpack=false"
 	CMListAPIsURI     = "/api/apis"
-	CMListAppsURI     = "/api/apps"
+	CMListAppsURI     = "/api/search?sortBy=com.soa.sort.order.alphabetical&count=20&start=0&q=type:app"
 	CMListPoliciesURI = "/api/policies"
 	CMListUsersURI    = "/api/search?sort=asc&sortBy=com.soa.sort.order.title_sort&Federation=false&count=20&start=0&q=type:user"
 )
@@ -80,6 +80,7 @@ Usage:
   atmotool upload file --path <path> <files>... [--config <config>] [--debug]
   atmotool download --path <path> <filename> [--config <config>] [--debug]
   atmotool list apis [--config <config>] [--debug]
+  atmotool list topapis [--config <config>] [--debug]
   atmotool list apps [--config <config>] [--debug]
   atmotool list users [--config <config>] [--debug]
   atmotool list policies [--config <config>] [--debug]
@@ -195,6 +196,8 @@ Options:
 			listApps()
 		} else if arguments["users"] == true {
 			listUsers()
+		} else if arguments["topapis"] == true {
+			listTopApis()
 		}
 	} else if arguments["download"] == true {
 		// Download path as filename.zip
@@ -328,7 +331,9 @@ func listApps() error {
 	if err != nil {
 		return err
 	}
-	log.Printf("%s", bodyBytes)
+	if debug {
+		log.Printf("%s", bodyBytes)
+	}
 	var apps cm.ApisResponse
 	err = json.Unmarshal(bodyBytes, &apps)
 	log.Printf("Found %v Apps", len(apps.Channel.Items))
@@ -336,7 +341,7 @@ func listApps() error {
 	var appList []Api
 
 	for _, v := range apps.Channel.Items {
-		appList = append(appList, Api{Name: v.EntityReference.Title})
+		appList = append(appList, Api{Name: v.Title})
 	}
 	jsonBytes, err := json.Marshal(appList)
 	if err != nil {
@@ -373,6 +378,34 @@ func listUsers() error {
 	return nil
 }
 
+func listTopApis() error {
+	log.Println("Listing Top APIs")
+
+	client, err := loginToCM()
+	if err != nil {
+		log.Fatalln(err)
+		return err
+	}
+
+	url := config.Url + "/api/businesses/tenantbusiness.enterpriseapi/metrics?TimeInterval=15m&Duration=all&Environment=All&ReportType=business.top10.apis"
+
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Add("Accept", "application/json")
+	if debug {
+		log.Println("curl command: ", curlThis(client, req))
+	}
+	resp, err := client.Do(req)
+
+	defer resp.Body.Close()
+
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("%s", bodyBytes)
+	return nil
+}
+
 func listApis() error {
 	//var request *http.Request
 	log.Println("Listing APIs")
@@ -388,7 +421,9 @@ func listApis() error {
 	//client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/json")
-	log.Println("curl command:", curlThis(client, req))
+	if debug {
+		log.Println("curl command:", curlThis(client, req))
+	}
 	resp, err := client.Do(req)
 
 	defer resp.Body.Close()
@@ -510,12 +545,12 @@ func uploadLessFile(uploadFilePath string, config Configuration) {
 	extraParams := map[string]string{
 		"none": "really",
 	}
-	uploadUri := config.Url + CMCustomLessURI
+	uploadURI := config.Url + CMCustomLessURI
 	if config.Theme != "" {
-		uploadUri = config.Url + "/resources/theme/" + config.Theme + "/less?unpack=false"
+		uploadURI = config.Url + "/resources/theme/" + config.Theme + "/less?unpack=false"
 	}
 
-	statusCode, err := uploadFile(client, uploadFilePath, extraParams, uploadUri)
+	statusCode, err := uploadFile(client, uploadFilePath, extraParams, uploadURI)
 	if err != nil {
 		log.Fatalf("Issues. %v : %s", statusCode, err)
 	}
@@ -530,11 +565,11 @@ func uploadLessFile(uploadFilePath string, config Configuration) {
 	}
 }
 
-func uploadFile(client *http.Client, uploadFilePath string, extras map[string]string, uploadUri string) (int, error) {
+func uploadFile(client *http.Client, uploadFilePath string, extras map[string]string, uploadURI string) (int, error) {
 	var uploadStatus int
 
 	//var request *http.Request
-	request, err := newFileUploadRequest(uploadUri, extras, "File", uploadFilePath)
+	request, err := newFileUploadRequest(uploadURI, extras, "File", uploadFilePath)
 	if err != nil {
 		log.Fatalln(err)
 		return uploadStatus, err
@@ -544,7 +579,7 @@ func uploadFile(client *http.Client, uploadFilePath string, extras map[string]st
 
 	// debug
 	if debug {
-		log.Println("* URL", uploadUri)
+		log.Println("* URL", uploadURI)
 		log.Println("* Upload Path", uploadFilePath)
 		for k, v := range request.Header {
 			log.Printf("* %s: %s", k, v)
@@ -555,23 +590,24 @@ func uploadFile(client *http.Client, uploadFilePath string, extras map[string]st
 	if err != nil {
 		log.Fatal(err)
 		return uploadStatus, err
-	} else {
-		body := &bytes.Buffer{}
-		_, err := body.ReadFrom(resp.Body)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		resp.Body.Close()
-
-		uploadStatus = resp.StatusCode
-
-		if uploadStatus != 200 {
-			b, _ := ioutil.ReadAll(body)
-			log.Println("* uploadFile", string(b))
-		}
-
-		//log.Printf("Upload status %v", resp.StatusCode)
 	}
+
+	body := &bytes.Buffer{}
+	_, err = body.ReadFrom(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	resp.Body.Close()
+
+	uploadStatus = resp.StatusCode
+
+	if uploadStatus != 200 {
+		b, _ := ioutil.ReadAll(body)
+		log.Println("* uploadFile", string(b))
+	}
+
+	//log.Printf("Upload status %v", resp.StatusCode)
+
 	return uploadStatus, nil
 }
 
@@ -784,7 +820,7 @@ func upload(files []string, config Configuration, path string) {
 		return
 	}
 
-	uploadUri := config.Url + path
+	uploadURI := config.Url + path
 
 	extraParams := map[string]string{
 		"none": "really",
@@ -793,10 +829,10 @@ func upload(files []string, config Configuration, path string) {
 	for _, v := range files {
 		log.Printf("Uploading %s ...\n", v)
 		if strings.HasSuffix(v, ".zip") {
-			uploadUri += "?unpack=true"
+			uploadURI += "?unpack=true"
 		}
-		//log.Println(uploadUri)
-		statusCode, err := uploadFile(client, v, extraParams, uploadUri)
+		//log.Println(uploadURI)
+		statusCode, err := uploadFile(client, v, extraParams, uploadURI)
 		if err != nil {
 			log.Fatalf("Issues. %v : %s", statusCode, err)
 		}
