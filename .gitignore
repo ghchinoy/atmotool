@@ -5,3 +5,5 @@ testdata
 atmotool
 /dist
 man/*.html
+script
+Makefile
