@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.4.5 20160610
+
+* minor change to listUsers - outputs response to stdout rather than log
+
 ### 1.4.4 20160322
 
 * added `list topapis` which makes a call to `/api/businesses/tenantbusiness.enterpriseapi/metrics`

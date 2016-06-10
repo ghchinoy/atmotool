@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	version     = "1.4.4"
+	version     = "1.4.5"
 	versionName = "cirrus"
 )
 
@@ -373,7 +373,7 @@ func listUsers() error {
 		return err
 	}
 
-	log.Printf("%s", bodyBytes)
+	fmt.Printf("%s", bodyBytes)
 
 	return nil
 }
@@ -432,6 +432,9 @@ func listApis() error {
 	if err != nil {
 		return err
 	}
+	if debug {
+		fmt.Printf("%s", bodyBytes)
+	}
 	var apis cm.ApisResponse
 	err = json.Unmarshal(bodyBytes, &apis)
 	log.Printf("Found %v APIs", len(apis.Channel.Items))
@@ -439,8 +442,10 @@ func listApis() error {
 	var apiList []Api
 
 	for _, v := range apis.Channel.Items {
-		//fmt.Printf("%s (%s)\n", v.EntityReference.Title, v.EntityReference.Guid)
-		apiList = append(apiList, Api{Name: v.EntityReference.Title})
+		if debug {
+			fmt.Printf("%s (%s)\n", v.EntityReference.Title, v.EntityReference.Guid)
+		}
+		apiList = append(apiList, Api{Name: v.EntityReference.Title, Id: v.EntityReference.Guid})
 	}
 
 	jsonBytes, err := json.Marshal(apiList)
