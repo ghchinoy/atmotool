@@ -47,24 +47,6 @@ Example usage of uploading customization zipfile to `/content/home/landing`
 
     atmotool upload file --path /content/home/landing prospect_contentHomeLanding.zip
 
-
-### Build zipfiles
-
-Builds zipfiles, suitable for uploading to Community Manager
-
-    atmotool zip --prefix <prefix> [--dir <dir>]
-
-* prefix: Prefix for zip to be created, PREFIX_resourcesThemeDefault.zip will be generated
-* dir: base directory of the CM customization files, defaults to the current directory
-
-Example usage creating a single zipfile
-
-    atmotool zip --prefix TEST --dir ./resources/theme/default
-
-Output would be, in the current working directory:
-
-    TEST_-resources-theme-default.zip
-
 ### Download a cms path as zip
 
 Downloads a zipfile for the indicated CMS path
@@ -102,7 +84,6 @@ Items deleted (note the `default` theme is modifiable via flag)
 * resources/theme/default/style/images/favico.ico
 * resources/theme/default/less/custom.les
 * content/home/landing/index.htm
-
 
 ### Build zipfiles
 
