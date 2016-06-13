@@ -1,6 +1,9 @@
 # Akana Community Manager CLI
 
-A command-line tool to manage Community Manager.
+A command-line tool to manage Akana's Community Manager API Portal.
+
+For downloads, please see the [downloads area](https://bitbucket.org/apihussain/atmotool/downloads).
+
 
 ```
 Usage:
