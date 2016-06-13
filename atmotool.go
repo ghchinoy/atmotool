@@ -16,8 +16,8 @@ import (
 	"strconv"
 	"strings"
 
-	"bitbucket.org/apihussain/atmotool/cm"
-	"bitbucket.org/apihussain/atmotool/zip"
+	"bitbucket.org/ghchinoy/atmotool/cm"
+	"bitbucket.org/ghchinoy/atmotool/zip"
 
 	"bytes"
 
@@ -72,7 +72,7 @@ var (
 
 func main() {
 
-	usage := `Akana Community Manager Helper Tool.
+	usage := `Akana Community Manager Command-Line Tool.
 
 Usage:
   atmotool zip --prefix <prefix> <dir>
