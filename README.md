@@ -8,19 +8,21 @@ For downloads, please see the [downloads area](./downloads).
 ```
 Usage:
   atmotool zip --prefix <prefix> <dir>
-  atmotool upload less <file> [--config <config>]
-  atmotool upload file --path <path> <files>... [--config <config>]
-  atmotool download --path <path> <filename> [--config <config>]
-  atmotool list apis [--config <config>]
-  atmotool list apps [--config <config>]
-  atmotool list policies [--config <config>]
-  atmotool rebuild [<theme>] [--config <config>]
-  atmotool reset [<theme>] [--config <config>]
+  atmotool upload less <file> [--config <config>] [--debug]
+  atmotool upload file --path <path> <files>... [--config <config>] [--debug]
+  atmotool download --path <path> <filename> [--config <config>] [--debug]
+  atmotool list apis [--config <config>] [--debug]
+  atmotool list topapis [--config <config>] [--debug]
+  atmotool list apps [--config <config>] [--debug]
+  atmotool list users [--config <config>] [--debug]
+  atmotool list policies [--config <config>] [--debug]
+  atmotool rebuild [<theme>] [--config <config>] [--debug]
+  atmotool reset [<theme>] [--config <config>] [--debug]
   atmotool -h | --help
   atmotool --version
 ```
 
-## Capabilities - _Working_
+## Capabilities
 
 ### Upload Less file
 
@@ -100,8 +102,6 @@ Items deleted (note the `default` theme is modifiable via flag)
 * resources/theme/default/style/images/favico.ico
 * resources/theme/default/less/custom.les
 * content/home/landing/index.htm
-
-## Capabilities - _Planned_
 
 
 ### Build zipfiles
