@@ -16,8 +16,8 @@ import (
 	"strconv"
 	"strings"
 
-	"bitbucket.org/ghchinoy/atmotool/cm"
-	"bitbucket.org/ghchinoy/atmotool/zip"
+	"github.com/ghchinoy/atmotool/cm"
+	"github.com/ghchinoy/atmotool/zip"
 
 	"bytes"
 
