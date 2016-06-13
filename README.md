@@ -136,7 +136,9 @@ Looks for and uploads `custom.less`, `PREFIX_resourcesThemeDefault.zip`, `PREFIX
 
 ## Installation
 
-Clone git repo to `$GOPATH/src/bitbucket.org/apihussain` then `cd atmotool`
+Clone git repo to `$GOPATH/src/bitbucket.org/ghchinoy`, change into the 
+directory (`cd atmotool`), get the prerequisite, and issue the go 
+install command.
 
     go get github.com/docopt/docopt-go
     go install
