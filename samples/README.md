@@ -1,10 +1,10 @@
 # Sample usage of Atmotool
 
-Included in this directory are sample.conf and custom.less
+Included in this directory are `sample.config` and `custom.less`
 
 To upload the less file and rebuild styles:
 
 ```
-atmotool upload less custom.less --config sample.conf
+atmotool upload less custom.less --config sample.config
 ```
 
