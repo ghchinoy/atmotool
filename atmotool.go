@@ -72,7 +72,7 @@ var (
 
 func main() {
 
-	usage := `Akana Community Manager Command-Line Tool.
+	usage := `Akana Community Manager Command-Line Interface.
 
 Usage:
   atmotool zip --prefix <prefix> <dir>
