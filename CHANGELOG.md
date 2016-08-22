@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.5.0 20160822
+
+* added a CMS list function
+
 ### 1.4.6 20160818
 
 * Rebuilding styles outputs which theme is being rebuilt
