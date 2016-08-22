@@ -5,7 +5,7 @@
 # No need to change anything below ####
 # 
 
-VERSION=1.4.5
+VERSION=1.4.6
 
 OSLIST=(linux darwin windows)
 ARCHLIST=(amd64 386)

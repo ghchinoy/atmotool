@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.4.6 20160818
+
+* Rebuilding styles outputs which theme is being rebuilt
+* Rebuilding & resetting functions now look to config struct (config file) first for theme, can still be overridden by cli param
+
 ### 1.4.5 20160610
 
 * minor change to listUsers - outputs response to stdout rather than log

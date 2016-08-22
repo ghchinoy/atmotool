@@ -2,7 +2,7 @@
 
 A command-line tool to manage [Akana](https://www.akana.com/)'s [Community Manager API Portal](https://www.akana.com/products/api-portal).
 
-For downloads, please see the [releases](./releases).
+For downloads, please see the [releases](https://github.com/ghchinoy/atmotool/releases).
 
 
 ```
