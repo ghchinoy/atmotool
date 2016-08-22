@@ -202,6 +202,14 @@ Options:
 			listUsers()
 		} else if arguments["topapis"] == true {
 			listTopApis()
+		} else if arguments["cms"] == true {
+
+			path, _ := arguments["<path>"].(string)
+			if len(path) == 0 {
+				listTopLevelCMS()
+			} else {
+				listCMS(path, 0)
+			}
 		}
 	} else if arguments["download"] == true {
 		// Download path as filename.zip
@@ -241,6 +249,65 @@ Options:
 		}
 		rebuildStyles(theme)
 	}
+}
+
+func listTopLevelCMS() {
+	listCMS("/content", 0)
+	listCMS("/resources", 0)
+}
+
+func listCMS(path string, indent int) error {
+	log.Println("Listing CMS path", path)
+
+	client, err := loginToCM()
+	if err != nil {
+		log.Fatalln(err)
+		return err
+	}
+
+	url := config.URL + path
+
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Add("Accept", "application/json")
+
+	resp, err := client.Do(req)
+
+	defer resp.Body.Close()
+
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	if debug {
+		log.Printf("%s", bodyBytes)
+	}
+	var cms cm.ApisResponse
+	err = json.Unmarshal(bodyBytes, &cms)
+
+	var sep string
+	var dirs []string
+	var files int
+
+	fmt.Printf(".%s\n", path)
+	for k, v := range cms.Channel.Items {
+		// separator determination
+		sep = "├──"
+		if k == len(cms.Channel.Items)-1 {
+			sep = "└──"
+		}
+		// indent determination
+
+		fmt.Printf("%s %s\n", sep, v.Title)
+
+		if v.Category[0].Value == "folder" {
+			dirs = append(dirs, v.Title)
+		} else {
+			files++
+		}
+	}
+	fmt.Printf("\n%v directories, %v files\n", len(dirs), files)
+
+	return nil
 }
 
 // resetCM deletes an array of items in a CM
