@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	version     = "1.4.6"
+	version     = "1.5.0"
 	versionName = "cirrus"
 )
 
@@ -251,18 +251,24 @@ Options:
 	}
 }
 
+// listTopLevelCMS is a convenience method to call listCMS for /content and /resources
 func listTopLevelCMS() {
 	listCMS("/content", 0)
 	listCMS("/resources", 0)
 }
 
-func listCMS(path string, indent int) error {
-	log.Println("Listing CMS path", path)
+func getCMSPath(path string) (cm.ApisResponse, error) {
 
+	var cms cm.ApisResponse
+
+	if debug {
+		log.Println("Getting content of: ", path)
+	}
+	// GET content path
 	client, err := loginToCM()
 	if err != nil {
 		log.Fatalln(err)
-		return err
+		return cms, err
 	}
 
 	url := config.URL + path
@@ -276,19 +282,38 @@ func listCMS(path string, indent int) error {
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return cms, err
 	}
 	if debug {
 		log.Printf("%s", bodyBytes)
 	}
-	var cms cm.ApisResponse
+
 	err = json.Unmarshal(bodyBytes, &cms)
+	if err != nil {
+		return cms, err
+	}
 
+	return cms, nil
+}
+
+func listCMS(path string, depth int) (int, int, error) {
+
+	var dircount, filecount int
+
+	if depth == 0 {
+		fmt.Println(path)
+	}
+
+	cms, err := getCMSPath(path)
+	if err != nil {
+		//log.Println("An error in getting path: ", err)
+		// TODO determine what to do with an error that happens with "/content/api"
+		return dircount, filecount, err
+	}
+
+	// Output content path
 	var sep string
-	var dirs []string
-	var files int
 
-	fmt.Printf(".%s\n", path)
 	for k, v := range cms.Channel.Items {
 		// separator determination
 		sep = "├──"
@@ -296,18 +321,41 @@ func listCMS(path string, indent int) error {
 			sep = "└──"
 		}
 		// indent determination
+		var indent string
+		if depth > 0 {
+			indent = " "
+			for i := 0; i < depth; i++ {
+				indent = indent + indent
+			}
+			sep = fmt.Sprintf("|%s%s", indent, sep)
+		}
 
 		fmt.Printf("%s %s\n", sep, v.Title)
 
 		if v.Category[0].Value == "folder" {
-			dirs = append(dirs, v.Title)
+			dircount++
+
+			descend := path + "/" + v.Title
+			depth++
+			d, f, err := listCMS(descend, depth)
+			if err != nil {
+				// eat the error for rendering purposes
+				//log.Printf("Unable to retrieve content of path %s. %s", path, err)
+				//return dircount, filecount, err
+			}
+			dircount = dircount + d
+			filecount = filecount + f
+			depth--
+
 		} else {
-			files++
+			filecount++
 		}
 	}
-	fmt.Printf("\n%v directories, %v files\n", len(dirs), files)
+	if depth == 0 {
+		fmt.Printf("\n%v directories, %v files\n", dircount, filecount)
+	}
 
-	return nil
+	return dircount, filecount, nil
 }
 
 // resetCM deletes an array of items in a CM
