@@ -16,6 +16,7 @@ Usage:
   atmotool list apps [--config <config>] [--debug]
   atmotool list users [--config <config>] [--debug]
   atmotool list policies [--config <config>] [--debug]
+  atmotool list cms [<path>] [--config <config>] [--debug]
   atmotool rebuild [<theme>] [--config <config>] [--debug]
   atmotool reset [<theme>] [--config <config>] [--debug]
   atmotool -h | --help
