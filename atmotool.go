@@ -25,13 +25,13 @@ import (
 )
 
 const (
-	version     = "1.4.5"
+	version     = "1.4.6"
 	versionName = "cirrus"
 )
 
 // Configuration provides a simple struct to hold login info
 type Configuration struct {
-	Url      string `json:"url"`
+	URL      string `json:"url"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Theme    string `json:"theme"`
@@ -43,11 +43,11 @@ type Auth struct {
 	Password string `json:"password"`
 }
 
-// Api is a CM API
-type Api struct {
+// API is a CM API
+type API struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
-	Id      string `json:"id"`
+	ID      string `json:"id"`
 }
 
 const (
@@ -84,6 +84,7 @@ Usage:
   atmotool list apps [--config <config>] [--debug]
   atmotool list users [--config <config>] [--debug]
   atmotool list policies [--config <config>] [--debug]
+  atmotool list cms [<path>] [--config <config>] [--debug]
   atmotool rebuild [<theme>] [--config <config>] [--debug]
   atmotool reset [<theme>] [--config <config>] [--debug]
   atmotool -h | --help
@@ -167,10 +168,13 @@ Options:
 			os.Exit(1)
 		}
 
-		theme, _ := arguments["<theme>"].(string)
+		theme := config.Theme
+
 		if theme == "" {
 			theme = "default"
 		}
+		// override config from cmdline
+		theme, _ = arguments["<theme>"].(string)
 
 		log.Println("Rebuilding styles for theme:", theme)
 
@@ -222,10 +226,13 @@ Options:
 			os.Exit(1)
 		}
 
-		theme, _ := arguments["<theme>"].(string)
+		// config file
+		theme := config.Theme
 		if theme == "" {
 			theme = "default"
 		}
+		// override from cmdline
+		theme, _ = arguments["<theme>"].(string)
 
 		err = resetCM(theme)
 		if err != nil {
@@ -257,7 +264,7 @@ func resetCM(theme string) error {
 	}
 
 	for _, url := range urls {
-		urlStr := config.Url + url
+		urlStr := config.URL + url
 		log.Println("Deleting", url)
 		err := callDeleteURL(client, urlStr)
 		if err != nil {
@@ -318,7 +325,7 @@ func listApps() error {
 		return err
 	}
 
-	url := config.Url + CMListAppsURI
+	url := config.URL + CMListAppsURI
 
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/json")
@@ -338,10 +345,10 @@ func listApps() error {
 	err = json.Unmarshal(bodyBytes, &apps)
 	log.Printf("Found %v Apps", len(apps.Channel.Items))
 
-	var appList []Api
+	var appList []API
 
 	for _, v := range apps.Channel.Items {
-		appList = append(appList, Api{Name: v.Title})
+		appList = append(appList, API{Name: v.Title})
 	}
 	jsonBytes, err := json.Marshal(appList)
 	if err != nil {
@@ -360,7 +367,7 @@ func listUsers() error {
 		return err
 	}
 
-	url := config.Url + CMListUsersURI
+	url := config.URL + CMListUsersURI
 
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/json")
@@ -387,7 +394,7 @@ func listTopApis() error {
 		return err
 	}
 
-	url := config.Url + "/api/businesses/tenantbusiness.enterpriseapi/metrics?TimeInterval=15m&Duration=all&Environment=All&ReportType=business.top10.apis"
+	url := config.URL + "/api/businesses/tenantbusiness.enterpriseapi/metrics?TimeInterval=15m&Duration=all&Environment=All&ReportType=business.top10.apis"
 
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/json")
@@ -416,7 +423,7 @@ func listApis() error {
 		return err
 	}
 
-	url := config.Url + CMListAPIsURI
+	url := config.URL + CMListAPIsURI
 
 	//client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -439,13 +446,13 @@ func listApis() error {
 	err = json.Unmarshal(bodyBytes, &apis)
 	log.Printf("Found %v APIs", len(apis.Channel.Items))
 
-	var apiList []Api
+	var apiList []API
 
 	for _, v := range apis.Channel.Items {
 		if debug {
 			fmt.Printf("%s (%s)\n", v.EntityReference.Title, v.EntityReference.Guid)
 		}
-		apiList = append(apiList, Api{Name: v.EntityReference.Title, Id: v.EntityReference.Guid})
+		apiList = append(apiList, API{Name: v.EntityReference.Title, ID: v.EntityReference.Guid})
 	}
 
 	jsonBytes, err := json.Marshal(apiList)
@@ -472,7 +479,7 @@ func listPolicies() error {
 
 	for _, policyType := range policyTypes {
 		log.Printf("%s\n", policyType)
-		url := config.Url + CMListPoliciesURI + "?Type=" + url.QueryEscape(policyType)
+		url := config.URL + CMListPoliciesURI + "?Type=" + url.QueryEscape(policyType)
 		//log.Printf("* %s\n", url)
 
 		//client := &http.Client{}
@@ -531,13 +538,17 @@ func initializeConfiguration(configLocation string) error {
 		return err
 	}
 
+	if debug {
+		log.Println("Config file contents:", config)
+	}
+
 	return nil
 }
 
 // Convenience method
 // TODO review this - http client created, but not used?
 func uploadLessFile(uploadFilePath string, config Configuration) {
-	log.Printf("Uploading Less file %s to %s\n", uploadFilePath, config.Url)
+	log.Printf("Uploading Less file %s to %s\n", uploadFilePath, config.URL)
 
 	client, err := loginToCM()
 	if err != nil {
@@ -550,9 +561,9 @@ func uploadLessFile(uploadFilePath string, config Configuration) {
 	extraParams := map[string]string{
 		"none": "really",
 	}
-	uploadURI := config.Url + CMCustomLessURI
+	uploadURI := config.URL + CMCustomLessURI
 	if config.Theme != "" {
-		uploadURI = config.Url + "/resources/theme/" + config.Theme + "/less?unpack=false"
+		uploadURI = config.URL + "/resources/theme/" + config.Theme + "/less?unpack=false"
 	}
 
 	statusCode, err := uploadFile(client, uploadFilePath, extraParams, uploadURI)
@@ -563,7 +574,7 @@ func uploadLessFile(uploadFilePath string, config Configuration) {
 	log.Printf("Upload status %v", statusCode)
 
 	if statusCode == 200 {
-		err = rebuildStyles("default")
+		err = rebuildStyles(config.Theme)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -663,7 +674,7 @@ func newFileUploadRequest(uri string, params map[string]string, paramName string
 // upload less file to CMS ??
 // call rebuild styles API
 func uploadAllHelper(dir string, config Configuration) {
-	fmt.Printf("Uploading all in %s to %s\n", dir, config.Url)
+	fmt.Printf("Uploading all in %s to %s\n", dir, config.URL)
 }
 
 func loginToCM() (*http.Client, error) {
@@ -680,7 +691,7 @@ func loginToCM() (*http.Client, error) {
 	}
 	client.Jar = jar
 
-	loginURI := config.Url + "/api/login"
+	loginURI := config.URL + "/api/login"
 	auth := Auth{config.Email, config.Password}
 	buf, err := json.Marshal(auth)
 	if err != nil {
@@ -735,8 +746,11 @@ func rebuildStyles(theme string) error {
 	// POST CM_URI/resources/branding/generatestyles
 	// Form Data
 	// theme: default
-	log.Println("Rebuilding styles...")
-	rebuildStylesURI := config.Url + "/resources/branding/generatestyles"
+	if len(theme) == 0 {
+		theme = "default"
+	}
+	log.Printf("Rebuilding styles for theme %s ...\n", theme)
+	rebuildStylesURI := config.URL + "/resources/branding/generatestyles"
 	postdata := url.Values{}
 	postdata.Set("theme", theme)
 
@@ -775,7 +789,7 @@ func download(path string, outputFilename string) {
 		return
 	}
 
-	downloadUri := config.Url + path + "?download=true&Zip=true"
+	downloadUri := config.URL + path + "?download=true&Zip=true"
 
 	file, err := os.Create(outputFilename)
 	if err != nil {
@@ -815,7 +829,7 @@ func download(path string, outputFilename string) {
 // basic upload to CMS
 // TODO review this - http client created but not used?
 func upload(files []string, config Configuration, path string) {
-	fmt.Printf("Uploading to %s cms location %s these: %s\n", config.Url, path, files)
+	fmt.Printf("Uploading to %s cms location %s these: %s\n", config.URL, path, files)
 	// upload FILE to CMS path PATH
 	// iterate through []FILE
 
@@ -825,7 +839,7 @@ func upload(files []string, config Configuration, path string) {
 		return
 	}
 
-	uploadURI := config.Url + path
+	uploadURI := config.URL + path
 
 	extraParams := map[string]string{
 		"none": "really",
