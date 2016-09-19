@@ -13,11 +13,13 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/ghchinoy/atmotool/cm"
 	"github.com/ghchinoy/atmotool/zip"
+	"github.com/ryanuber/columnize"
 
 	"bytes"
 
@@ -25,7 +27,7 @@ import (
 )
 
 const (
-	version     = "1.5.0"
+	version     = "1.5.1"
 	versionName = "cirrus"
 )
 
@@ -43,11 +45,87 @@ type Auth struct {
 	Password string `json:"password"`
 }
 
-// API is a CM API
+// API is a convenience structure for a CM API
 type API struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
 	ID      string `json:"id"`
+}
+
+// APIs is a collection of API structs
+type APIs []API
+
+// Len is an implementation of sort interface for length of APIs
+func (slice APIs) Len() int {
+	return len(slice)
+}
+
+// Less is an implementation of sort interface for less comparison
+func (slice APIs) Less(i, j int) bool {
+	return slice[i].Name < slice[j].Name
+}
+
+// Swap is an implementation of the sort interface swap function
+func (slice APIs) Swap(i, j int) {
+	slice[i], slice[j] = slice[j], slice[i]
+}
+
+// App is a convenience structure for a CM App
+type App struct {
+	Name        string `json:"name"`
+	Version     string `json:"version"`
+	ID          string `json:"id"`
+	Visibility  string `json:"visibility"`
+	Connections int    `json:"connections"`
+	Followers   int    `json:"followers"`
+	Rating      float32
+}
+
+// Apps is a collection of API structs
+type Apps []App
+
+// Len is an implementation of sort interface for length of Apps
+func (slice Apps) Len() int {
+	return len(slice)
+}
+
+// Less is an implementation of sort interface for less comparison
+func (slice Apps) Less(i, j int) bool {
+	return slice[i].Name < slice[j].Name
+}
+
+// Swap is an implementation of the sort interface swap function
+func (slice Apps) Swap(i, j int) {
+	slice[i], slice[j] = slice[j], slice[i]
+}
+
+// User is a convenience structure for a CM User
+type User struct {
+	Name        string
+	ProfileName string
+	Version     string
+	ID          string
+	Domain      string
+	Email       string
+	UserName    string
+}
+
+// Users is a collection of API structs
+type Users []User
+
+// Len is an implementation of sort interface for length of Users list
+func (slice Users) Len() int {
+	return len(slice)
+}
+
+// Less is an implementation of sort interface for less comparison
+func (slice Users) Less(i, j int) bool {
+	return slice[i].Name < slice[j].Name
+}
+
+// Swap is an implementation of the sort interface swap function
+func (slice Users) Swap(i, j int) {
+	slice[i], slice[j] = slice[j], slice[i]
 }
 
 const (
@@ -314,6 +392,8 @@ func listCMS(path string, depth int) (int, int, error) {
 	// Output content path
 	var sep string
 
+	var partialbuffer bytes.Buffer
+
 	for k, v := range cms.Channel.Items {
 		// separator determination
 		sep = "├──"
@@ -330,6 +410,7 @@ func listCMS(path string, depth int) (int, int, error) {
 			sep = fmt.Sprintf("|%s%s", indent, sep)
 		}
 
+		partialbuffer.WriteString(fmt.Sprintf("%s %s\n", sep, v.Title))
 		fmt.Printf("%s %s\n", sep, v.Title)
 
 		if v.Category[0].Value == "folder" {
@@ -351,6 +432,8 @@ func listCMS(path string, depth int) (int, int, error) {
 			filecount++
 		}
 	}
+	//fmt.Print(partialbuffer.String())
+
 	if depth == 0 {
 		fmt.Printf("\n%v directories, %v files\n", dircount, filecount)
 	}
@@ -432,7 +515,9 @@ func curlThis(client *http.Client, req *http.Request) string {
 
 // May not work with 8.0, /api/apps removed?
 func listApps() error {
-	log.Println("Listing Apps")
+	if debug {
+		log.Println("Listing Apps")
+	}
 
 	client, err := loginToCM()
 	if err != nil {
@@ -458,24 +543,48 @@ func listApps() error {
 	}
 	var apps cm.ApisResponse
 	err = json.Unmarshal(bodyBytes, &apps)
-	log.Printf("Found %v Apps", len(apps.Channel.Items))
+	if debug {
+		log.Printf("Found %v Apps", len(apps.Channel.Items))
+	}
 
-	var appList []API
+	var appList Apps
 
 	for _, v := range apps.Channel.Items {
-		appList = append(appList, API{Name: v.Title})
+		var visibility string
+		cats := v.Category
+		for _, c := range cats {
+			if c.Domain == "uddi:soa.com:visibility" {
+				visibility = c.Value
+			}
+		}
+		appList = append(appList, App{
+			Name: v.Title, ID: v.Guid.Value, Visibility: visibility,
+			Connections: v.Connections,
+			Followers:   v.Followers,
+			Rating:      v.Rating,
+		})
 	}
-	jsonBytes, err := json.Marshal(appList)
-	if err != nil {
-		log.Printf("Unable to marshall appList to json")
+	sort.Sort(appList)
+	fmt.Printf("%v apps.\n", len(appList))
+	pattern := "%-45s %-20s %-8s %-3v %-3v %-3v\n"
+	fmt.Printf(pattern, "ID", "Name", "Vis", "Con", "Fol", "Rat")
+	for _, v := range appList {
+		fmt.Printf(pattern, v.ID, v.Name, v.Visibility, v.Connections, v.Followers, v.Rating)
 	}
-	fmt.Printf("%s", jsonBytes)
-
+	/*
+		jsonBytes, err := json.Marshal(appList)
+		if err != nil {
+			log.Printf("Unable to marshall appList to json")
+		}
+		fmt.Printf("%s", jsonBytes)
+	*/
 	return nil
 }
 
 func listUsers() error {
-	log.Println("Listing Users")
+	if debug {
+		log.Println("Listing Users")
+	}
 
 	client, err := loginToCM()
 	if err != nil {
@@ -486,7 +595,9 @@ func listUsers() error {
 
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/json")
-	log.Println("curl command:", curlThis(client, req))
+	if debug {
+		log.Println("curl command:", curlThis(client, req))
+	}
 	resp, err := client.Do(req)
 	defer resp.Body.Close()
 
@@ -495,7 +606,30 @@ func listUsers() error {
 		return err
 	}
 
-	fmt.Printf("%s", bodyBytes)
+	var apis cm.ApisResponse
+	err = json.Unmarshal(bodyBytes, &apis)
+	if debug {
+		log.Printf("Found %v Users", len(apis.Channel.Items))
+	}
+	var userList Users
+
+	for _, v := range apis.Channel.Items {
+		userList = append(userList, User{
+			ProfileName: v.Title, Name: v.Description, Domain: v.Domain, ID: v.Guid.Value,
+			UserName: v.UserName, Email: v.Email,
+		})
+	}
+	sort.Sort(userList)
+	fmt.Printf("%v Users\n", len(userList))
+	var data []string
+	data = append(data, "Name | Email | UserName | Domain | ID")
+	for _, v := range userList {
+		data = append(data, fmt.Sprintf("%s | %s | %s | %s | %s", v.Name, v.Email, v.UserName, v.Domain, v.ID))
+		//fmt.Printf("%-28s %-29s %s @ %s\n", v.Name, v.Email, v.UserName, v.Domain)
+	}
+	result := columnize.SimpleFormat(data)
+	fmt.Println(result)
+	//fmt.Printf("%s", bodyBytes)
 
 	return nil
 }
@@ -530,8 +664,9 @@ func listTopApis() error {
 
 func listApis() error {
 	//var request *http.Request
-	log.Println("Listing APIs")
-
+	if debug {
+		log.Println("Listing APIs")
+	}
 	client, err := loginToCM()
 	if err != nil {
 		log.Fatalln(err)
@@ -559,9 +694,13 @@ func listApis() error {
 	}
 	var apis cm.ApisResponse
 	err = json.Unmarshal(bodyBytes, &apis)
-	log.Printf("Found %v APIs", len(apis.Channel.Items))
+	if debug {
+		log.Printf("Found %v APIs", len(apis.Channel.Items))
+	}
 
-	var apiList []API
+	var apiList APIs
+
+	fmt.Printf("%v APIs\n", len(apis.Channel.Items))
 
 	for _, v := range apis.Channel.Items {
 		if debug {
@@ -570,11 +709,11 @@ func listApis() error {
 		apiList = append(apiList, API{Name: v.EntityReference.Title, ID: v.EntityReference.Guid})
 	}
 
-	jsonBytes, err := json.Marshal(apiList)
-	if err != nil {
-		log.Printf("Unable to marshall apilist to json")
+	sort.Sort(apiList)
+
+	for _, v := range apiList {
+		fmt.Printf("%-46s %-20s\n", v.ID, v.Name)
 	}
-	fmt.Printf("%s", jsonBytes)
 
 	return nil
 }
@@ -582,7 +721,9 @@ func listApis() error {
 // incomplete - list raw json of policies
 // should show a more human readable output
 func listPolicies() error {
-	log.Println("Listing Policies")
+	if debug {
+		log.Println("Listing Policies")
+	}
 
 	client, err := loginToCM()
 	if err != nil {
@@ -593,7 +734,9 @@ func listPolicies() error {
 	policyTypes := []string{"Operational Policy", "Denial of Service", "Compliance Policy", "Service Level Policy"}
 
 	for _, policyType := range policyTypes {
-		log.Printf("%s\n", policyType)
+		if debug {
+			log.Printf("%s\n", policyType)
+		}
 		url := config.URL + CMListPoliciesURI + "?Type=" + url.QueryEscape(policyType)
 		//log.Printf("* %s\n", url)
 
@@ -610,12 +753,17 @@ func listPolicies() error {
 		}
 		var policies cm.ApisResponse
 		err = json.Unmarshal(bodyBytes, &policies)
-		log.Println("Found", len(policies.Channel.Items), " policies.")
+		if debug {
+			log.Println("Found", len(policies.Channel.Items), " policies.")
+		}
+
+		fmt.Printf("%v %s Policies.\n", len(policies.Channel.Items), policyType)
+		fmt.Println("---------------------------------")
 
 		if len(policies.Channel.Items) > 1 {
 			//log.Printf("%s", bodyBytes)
 			for _, v := range policies.Channel.Items {
-				fmt.Printf("\"%s\" (%s)\n", v.Title, v.Guid.Value)
+				fmt.Printf("%-45s %s\n", v.Guid.Value, v.Title)
 			}
 		}
 

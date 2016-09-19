@@ -21,6 +21,20 @@ type Item struct {
 	EntityReferences []EntityReference `json:"EntityReferences.EntityReference"`
 	EntityReference  EntityReference   `json:"EntityReference"`
 	ImageUrl         string            `json:"Image.Url"`
+	// App
+	Connections int
+	Followers   int
+	Rating      float32
+	// User
+	LastLogin     int
+	Email         string
+	UserName      string
+	ApisCount     int
+	AppsCount     int
+	PostsCount    int
+	CommentsCount int
+	GroupsCount   int
+	Domain        string
 }
 
 // ValueDomain is a key - value pair

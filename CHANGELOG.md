@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.5.1 20160918
+* formatting for `list apis` and `list policies`
+
 ### 1.5.0 20160822
 
 * added a CMS list function

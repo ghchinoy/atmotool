@@ -1,0 +1,17 @@
+{
+	"ImportPath": "github.com/ghchinoy/atmotool",
+	"GoVersion": "go1.7",
+	"GodepVersion": "v74",
+	"Deps": [
+		{
+			"ImportPath": "github.com/docopt/docopt-go",
+			"Comment": "0.6.1-5-g854c423",
+			"Rev": "854c423c810880e30b9fecdabb12d54f4a92f9bb"
+		},
+		{
+			"ImportPath": "github.com/ryanuber/columnize",
+			"Comment": "v2.1.0-9-g6f43af5",
+			"Rev": "6f43af5ecd2928c6fef2b4f35ef6f36f96690390"
+		}
+	]
+}
