@@ -1,8 +1,43 @@
-# Akana Community Manager CLI
+# Akana API Platform Portal CLI
 
 A command-line tool to manage [Akana](https://www.akana.com/)'s [Community Manager API Portal](https://www.akana.com/products/api-portal).
 
-For downloads, please see the [releases](https://github.com/ghchinoy/atmotool/releases).
+## Installation
+
+### Download
+
+For downloads, please see the [releases](https://github.com/ghchinoy/atmotool/releases) - Linux, Windows and OS X binaries are available.
+
+
+### Via Homebrew (for OS X)
+
+```
+brew update
+brew install ghchinoy/akana/atmotool
+```
+
+### From Source
+
+Clone git repo to `$GOPATH/src/github.com/ghchinoy`, change into the 
+directory (`cd atmotool`), get the prerequisite, and issue the go 
+install command.
+
+    go get github.com/docopt/docopt-go
+    go install
+
+## Usage
+
+Requires a config file (typically called _environment_`.config`, ex. `local.config` or `eap.config`) that contains CM url, username, and password, in JSON format:
+
+```
+{
+    "url": "http://local.cm.demo:9900",
+    "email": "administrator@cm.demo",
+    "password": "password"
+}
+```
+
+Note, no CM context (ex. `/atmosphere` or `/enterpriseapi`) is needed in the `url`.
 
 
 ```
@@ -11,12 +46,13 @@ Usage:
   atmotool upload less <file> [--config <config>] [--debug]
   atmotool upload file --path <path> <files>... [--config <config>] [--debug]
   atmotool download --path <path> <filename> [--config <config>] [--debug]
-  atmotool list apis [--config <config>] [--debug]
-  atmotool list topapis [--config <config>] [--debug]
+  atmotool apis list [--config <config>] [--debug]
+  atmotool apis metrics <apiId> [--config <config>] [--debug]
+  atmotool apis logs <apiId> [--config <config>] [--debug]
   atmotool list apps [--config <config>] [--debug]
   atmotool list users [--config <config>] [--debug]
   atmotool list policies [--config <config>] [--debug]
-  atmotool list cms [<path>] [--config <config>] [--debug]
+  atmotool cms list [<path>] [--config <config>] [--debug]
   atmotool rebuild [<theme>] [--config <config>] [--debug]
   atmotool reset [<theme>] [--config <config>] [--debug]
   atmotool -h | --help
@@ -24,6 +60,8 @@ Usage:
 ```
 
 ## Capabilities
+
+This section contains a partial description of capabililites.
 
 ### Upload Less file
 
@@ -116,40 +154,9 @@ Looks for and uploads `custom.less`, `PREFIX_resourcesThemeDefault.zip`, `PREFIX
 * dir: base directory for the CM customizations to upload, defaults to current directory
 
 
-## Installation
-
-### Via Homebrew (for OS X)
-
-```
-brew update
-brew install ghchinoy/akana/atmotool
-```
-
-### From Source
-
-Clone git repo to `$GOPATH/src/bitbucket.org/ghchinoy`, change into the 
-directory (`cd atmotool`), get the prerequisite, and issue the go 
-install command.
-
-    go get github.com/docopt/docopt-go
-    go install
-
-Requires a config file (typically called _environment_`.config`, ex. `local.config` or `eap.config`) that contains CM url, username, and password, in JSON format:
-
-```
-{
-    "url": "http://local.cm.demo:9900",
-    "email": "administrator@cm.demo",
-    "password": "password"
-}
-```
-
-Note, no CM context (ex. `/atmosphere` or `/enterpriseapi`).
-
-
 
 ## Development Notes
 
 
-Using `docopt.org` for command line argument processing
+Atmotool uses `docopt.org` for command line argument processing.
 
