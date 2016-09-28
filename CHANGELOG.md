@@ -1,5 +1,11 @@
 # Changelog
 
+### 1.6.0 20160926
+* initial refactor of command structure (ex. `apis list`), while keeping old one (ex. `list apis`)
+* added `apis list`, `apis metrics <apiID>`, `apis logs <apiID>`
+* added `cms list`
+* homebrew installation for OS X (ref [tap](https://github.com/ghchinoy/homebrew-akana))
+
 ### 1.5.1 20160918
 * formatting for `list apis` and `list policies`
 

@@ -9,7 +9,6 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
-	"net/http/cookiejar"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -17,7 +16,10 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ghchinoy/atmotool/apis"
 	"github.com/ghchinoy/atmotool/cm"
+	"github.com/ghchinoy/atmotool/control"
+	"github.com/ghchinoy/atmotool/version"
 	"github.com/ghchinoy/atmotool/zip"
 	"github.com/ryanuber/columnize"
 
@@ -26,24 +28,7 @@ import (
 	"github.com/docopt/docopt-go"
 )
 
-const (
-	version     = "1.5.1"
-	versionName = "cirrus"
-)
-
-// Configuration provides a simple struct to hold login info
-type Configuration struct {
-	URL      string `json:"url"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Theme    string `json:"theme"`
-}
-
-// Auth is another simple struct
-type Auth struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
+// TODO API struct is duplicated in api/list.go - remove from this file
 
 // API is a convenience structure for a CM API
 type API struct {
@@ -128,6 +113,9 @@ func (slice Users) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
+// TODO this const block is replicated in api/list.go
+//  make sure the appropriate consts are in the appropriate command code files
+//  remove unnecessary from here
 const (
 	CMLandingIndex         = "/content/home/landing/index.htm"
 	CMInternationalization = "/i18n"
@@ -135,14 +123,13 @@ const (
 	CMFavicon              = "/style/images/favicon.ico"
 	// CMCustomLessURI should be a template, subsitute in Configuration.Theme
 	CMCustomLessURI   = "/resources/theme/default/less?unpack=false"
-	CMListAPIsURI     = "/api/apis"
 	CMListAppsURI     = "/api/search?sortBy=com.soa.sort.order.alphabetical&count=20&start=0&q=type:app"
 	CMListPoliciesURI = "/api/policies"
 	CMListUsersURI    = "/api/search?sort=asc&sortBy=com.soa.sort.order.title_sort&Federation=false&count=20&start=0&q=type:user"
 )
 
 var (
-	config Configuration
+	config control.Configuration
 	client *http.Client
 	jar    http.CookieJar
 	debug  bool
@@ -158,11 +145,15 @@ Usage:
   atmotool upload file --path <path> <files>... [--config <config>] [--debug]
   atmotool download --path <path> <filename> [--config <config>] [--debug]
   atmotool list apis [--config <config>] [--debug]
+  atmotool apis list [--config <config>] [--debug]
+  atmotool apis metrics <apiId> [--config <config>] [--debug]
+  atmotool apis logs <apiId> [--config <config>] [--debug]
   atmotool list topapis [--config <config>] [--debug]
   atmotool list apps [--config <config>] [--debug]
   atmotool list users [--config <config>] [--debug]
   atmotool list policies [--config <config>] [--debug]
   atmotool list cms [<path>] [--config <config>] [--debug]
+  atmotool cms list [<path>] [--config <config>] [--debug]
   atmotool rebuild [<theme>] [--config <config>] [--debug]
   atmotool reset [<theme>] [--config <config>] [--debug]
   atmotool -h | --help
@@ -177,7 +168,7 @@ Options:
 `
 	//   atmotool upload all --config <config> [--dir <dir>]
 
-	arguments, _ := docopt.Parse(usage, nil, true, version+" "+versionName, false)
+	arguments, _ := docopt.Parse(usage, nil, true, version.Version(), false)
 
 	// Debug for command-line args
 	/*
@@ -201,7 +192,7 @@ Options:
 
 	if arguments["upload"] == true {
 		configLocation, _ := arguments["--config"].(string)
-		err := initializeConfiguration(configLocation)
+		config, err := control.InitializeConfiguration(configLocation, debug)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -240,7 +231,7 @@ Options:
 		zip.ZipFolder(dir, fn)
 	} else if arguments["rebuild"] == true {
 		configLocation, _ := arguments["--config"].(string)
-		err := initializeConfiguration(configLocation)
+		config, err := control.InitializeConfiguration(configLocation, debug)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -260,11 +251,66 @@ Options:
 		if err != nil {
 			log.Println(err)
 		}
+	} else if arguments["apis"] == true {
+		// APIs
+		configLocation, _ := arguments["--config"].(string)
+		config, err := control.InitializeConfiguration(configLocation, debug)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		if arguments["list"] == true {
+			apis.APIList(config, debug)
+			//listApis()
+		} else if arguments["metrics"] == true {
+			apiID, _ := arguments["<apiId>"].(string)
+			if len(apiID) == 0 {
+				fmt.Println("Unable to determine API ID.")
+				os.Exit(1)
+			}
+			err := apis.APIMetrics(apiID, config, debug)
+			if err != nil {
+				fmt.Println(err.Error())
+				os.Exit(1)
+			}
+			// if <method>
+			//apiMetricsForMethod(apiID, method)
+		} else if arguments["logs"] == true {
+			apiID, _ := arguments["<apiId>"].(string)
+			if len(apiID) == 0 {
+				fmt.Println("Unable to determine API ID.")
+				os.Exit(1)
+			}
+			err := apis.APILogs(apiID, config, debug)
+			if err != nil {
+				log.Println(err.Error())
+				os.Exit(1)
+			}
+		}
+	} else if arguments["cms"] == true {
+		// CMS
+		configLocation, _ := arguments["--config"].(string)
+		var err error
+		config, err = control.InitializeConfiguration(configLocation, debug)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		if arguments["list"] == true {
+
+			path, _ := arguments["<path>"].(string)
+			if len(path) == 0 {
+				listTopLevelCMS()
+			} else {
+				listCMS(path, 0)
+			}
+		}
 	} else if arguments["list"] == true {
 		// List policies
 		// List APIs
 		configLocation, _ := arguments["--config"].(string)
-		err := initializeConfiguration(configLocation)
+		var err error
+		config, err = control.InitializeConfiguration(configLocation, debug)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -273,7 +319,8 @@ Options:
 		if arguments["policies"] == true {
 			listPolicies()
 		} else if arguments["apis"] == true {
-			listApis()
+			//listApis()
+			apis.APIList(config, debug)
 		} else if arguments["apps"] == true {
 			listApps()
 		} else if arguments["users"] == true {
@@ -292,7 +339,8 @@ Options:
 	} else if arguments["download"] == true {
 		// Download path as filename.zip
 		configLocation, _ := arguments["--config"].(string)
-		err := initializeConfiguration(configLocation)
+		var err error
+		config, err = control.InitializeConfiguration(configLocation, debug)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -306,7 +354,7 @@ Options:
 		download(path, outputFilename)
 	} else if arguments["reset"] == true {
 		configLocation, _ := arguments["--config"].(string)
-		err := initializeConfiguration(configLocation)
+		config, err := control.InitializeConfiguration(configLocation, debug)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -343,7 +391,7 @@ func getCMSPath(path string) (cm.ApisResponse, error) {
 		log.Println("Getting content of: ", path)
 	}
 	// GET content path
-	client, err := loginToCM()
+	client, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return cms, err
@@ -445,7 +493,7 @@ func listCMS(path string, depth int) (int, int, error) {
 // content or resource directory
 func resetCM(theme string) error {
 
-	client, err := loginToCM()
+	client, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return err
@@ -519,7 +567,7 @@ func listApps() error {
 		log.Println("Listing Apps")
 	}
 
-	client, err := loginToCM()
+	client, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return err
@@ -586,7 +634,7 @@ func listUsers() error {
 		log.Println("Listing Users")
 	}
 
-	client, err := loginToCM()
+	client, err := control.LoginToCM(config, debug)
 	if err != nil {
 		return err
 	}
@@ -637,7 +685,7 @@ func listUsers() error {
 func listTopApis() error {
 	log.Println("Listing Top APIs")
 
-	client, err := loginToCM()
+	client, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return err
@@ -662,62 +710,6 @@ func listTopApis() error {
 	return nil
 }
 
-func listApis() error {
-	//var request *http.Request
-	if debug {
-		log.Println("Listing APIs")
-	}
-	client, err := loginToCM()
-	if err != nil {
-		log.Fatalln(err)
-		return err
-	}
-
-	url := config.URL + CMListAPIsURI
-
-	//client := &http.Client{}
-	req, err := http.NewRequest("GET", url, nil)
-	req.Header.Add("Accept", "application/json")
-	if debug {
-		log.Println("curl command:", curlThis(client, req))
-	}
-	resp, err := client.Do(req)
-
-	defer resp.Body.Close()
-
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-	if debug {
-		fmt.Printf("%s", bodyBytes)
-	}
-	var apis cm.ApisResponse
-	err = json.Unmarshal(bodyBytes, &apis)
-	if debug {
-		log.Printf("Found %v APIs", len(apis.Channel.Items))
-	}
-
-	var apiList APIs
-
-	fmt.Printf("%v APIs\n", len(apis.Channel.Items))
-
-	for _, v := range apis.Channel.Items {
-		if debug {
-			fmt.Printf("%s (%s)\n", v.EntityReference.Title, v.EntityReference.Guid)
-		}
-		apiList = append(apiList, API{Name: v.EntityReference.Title, ID: v.EntityReference.Guid})
-	}
-
-	sort.Sort(apiList)
-
-	for _, v := range apiList {
-		fmt.Printf("%-46s %-20s\n", v.ID, v.Name)
-	}
-
-	return nil
-}
-
 // incomplete - list raw json of policies
 // should show a more human readable output
 func listPolicies() error {
@@ -725,7 +717,7 @@ func listPolicies() error {
 		log.Println("Listing Policies")
 	}
 
-	client, err := loginToCM()
+	client, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return err
@@ -772,48 +764,12 @@ func listPolicies() error {
 	return nil
 }
 
-// Reads config (or local.conf)
-func initializeConfiguration(configLocation string) error {
-
-	if configLocation == "" || configLocation == "<nil>" {
-		cwd, err := os.Getwd()
-		if err != nil {
-			fmt.Println("Cant't get working directory,")
-			return err
-		}
-		configLocation = cwd + "/local.conf"
-	}
-
-	configBytes, err := ioutil.ReadFile(configLocation)
-	if err != nil {
-		fmt.Printf("Error opening config file: %s\n", err)
-		return err
-	}
-	//var config Configuration
-	err = json.Unmarshal(configBytes, &config)
-	if err != nil {
-		fmt.Printf("Unable to parse configuration file: %s\n", err)
-		return err
-	}
-
-	if len(config.Password) < 1 {
-		fmt.Printf("Missing or blank password.")
-		return err
-	}
-
-	if debug {
-		log.Println("Config file contents:", config)
-	}
-
-	return nil
-}
-
 // Convenience method
 // TODO review this - http client created, but not used?
-func uploadLessFile(uploadFilePath string, config Configuration) {
+func uploadLessFile(uploadFilePath string, config control.Configuration) {
 	log.Printf("Uploading Less file %s to %s\n", uploadFilePath, config.URL)
 
-	client, err := loginToCM()
+	client, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return
@@ -936,54 +892,8 @@ func newFileUploadRequest(uri string, params map[string]string, paramName string
 // upload PREFIX_contentHomeLanding.zip to CMS /content/home/landing
 // upload less file to CMS ??
 // call rebuild styles API
-func uploadAllHelper(dir string, config Configuration) {
+func uploadAllHelper(dir string, config control.Configuration) {
 	fmt.Printf("Uploading all in %s to %s\n", dir, config.URL)
-}
-
-func loginToCM() (*http.Client, error) {
-	// Login
-	if debug {
-		log.Println("Logging in...")
-	}
-	client = &http.Client{}
-	var err error
-	jar, err = cookiejar.New(nil)
-	if err != nil {
-		log.Fatalln(err)
-		return client, err
-	}
-	client.Jar = jar
-
-	loginURI := config.URL + "/api/login"
-	auth := Auth{config.Email, config.Password}
-	buf, err := json.Marshal(auth)
-	if err != nil {
-		log.Fatalln(err)
-		return client, err
-	}
-	req, err := http.NewRequest("POST", loginURI, bytes.NewReader(buf))
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatalln(err)
-		return client, err
-	}
-	if resp.StatusCode != 200 {
-		log.Printf("Login %s", resp.Status)
-	}
-
-	// debug
-	if debug {
-		log.Println(">>> DEBUG >>>")
-		for k, v := range resp.Header {
-			log.Printf("%s : %s", k, v)
-		}
-		log.Println("<<< DEBUG <<<")
-	}
-
-	return client, nil
 }
 
 // checks to see if cookie jar has Csrf and adds it as a header
@@ -993,14 +903,14 @@ func addCsrfHeader(req *http.Request, client *http.Client) *http.Request {
 			req.Header.Add("X-"+v.Name, v.Value)
 		}
 	}
-	req.Header.Add("Atmotool", version)
+	req.Header.Add("Atmotool", version.Version())
 	return req
 }
 
 // Call CM Rebuild Styles
 func rebuildStyles(theme string) error {
 
-	client, err := loginToCM()
+	client, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return err
@@ -1046,7 +956,7 @@ func rebuildStyles(theme string) error {
 func download(path string, outputFilename string) {
 	fmt.Printf("Downloading CMS path %s to file %s\n", path, outputFilename)
 
-	client, err := loginToCM()
+	client, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return
@@ -1091,12 +1001,12 @@ func download(path string, outputFilename string) {
 
 // basic upload to CMS
 // TODO review this - http client created but not used?
-func upload(files []string, config Configuration, path string) {
+func upload(files []string, config control.Configuration, path string) {
 	fmt.Printf("Uploading to %s cms location %s these: %s\n", config.URL, path, files)
 	// upload FILE to CMS path PATH
 	// iterate through []FILE
 
-	client, err := loginToCM()
+	client, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return
