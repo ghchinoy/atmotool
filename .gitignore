@@ -9,3 +9,4 @@ script
 Makefile
 samples/*.json
 *.tar.gz
+.vscode
