@@ -118,6 +118,15 @@ Looks for and uploads `custom.less`, `PREFIX_resourcesThemeDefault.zip`, `PREFIX
 
 ## Installation
 
+### Via Homebrew (for OS X)
+
+```
+brew update
+brew install ghchinoy/akana/atmotool
+```
+
+### From Source
+
 Clone git repo to `$GOPATH/src/bitbucket.org/ghchinoy`, change into the 
 directory (`cd atmotool`), get the prerequisite, and issue the go 
 install command.

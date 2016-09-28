@@ -8,3 +8,4 @@ man/*.html
 script
 Makefile
 samples/*.json
+*.tar.gz
