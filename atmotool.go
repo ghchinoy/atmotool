@@ -148,6 +148,7 @@ Usage:
   atmotool apis list [--config <config>] [--debug]
   atmotool apis metrics <apiId> [--config <config>] [--debug]
   atmotool apis logs <apiId> [--config <config>] [--debug]
+  atmotool apis add <apiName> [--from <serviceID> | --spec <spec>] [--endpoint <endpoint>] [--config <config>] [--debug]
   atmotool list topapis [--config <config>] [--debug]
   atmotool list apps [--config <config>] [--debug]
   atmotool list users [--config <config>] [--debug]
@@ -187,11 +188,13 @@ Options:
 	// convert to switch?
 
 	if arguments["--debug"] == true {
+		// Debug
 		debug = true
 		log.Println("Debug output requested.")
 	}
 
 	if arguments["upload"] == true {
+		// Upload
 		configLocation, _ := arguments["--config"].(string)
 		config, err := control.InitializeConfiguration(configLocation, debug)
 		if err != nil {
@@ -200,12 +203,15 @@ Options:
 		}
 
 		if arguments["less"] == true {
+			// Upload Less
 			uploadFilePath := arguments["<file>"].(string)
 			uploadLessFile(uploadFilePath, config)
 		} else if arguments["all"] == true {
+			// Upload all
 			dir, _ := arguments["--dir"].(string)
 			uploadAllHelper(dir, config)
 		} else if arguments["file"] == true {
+			// Upload file
 			var files []string
 			for _, v := range arguments["<files>"].([]string) {
 				files = append(files, v)
@@ -214,10 +220,12 @@ Options:
 			upload(files, config, path)
 		}
 	} else if arguments["version"] == true {
+		// Version
 		fmt.Println(version.Version())
 		os.Exit(0)
 
 	} else if arguments["zip"] == true {
+		// Zip
 		prefix, _ := arguments["<prefix>"].(string)
 		dir, _ := arguments["<dir>"].(string)
 		//zip.ZipPredefinedPath(prefix, dir)
@@ -235,6 +243,7 @@ Options:
 
 		zip.ZipFolder(dir, fn)
 	} else if arguments["rebuild"] == true {
+		// Rebuild
 		configLocation, _ := arguments["--config"].(string)
 		config, err := control.InitializeConfiguration(configLocation, debug)
 		if err != nil {
@@ -265,8 +274,8 @@ Options:
 			os.Exit(1)
 		}
 		if arguments["list"] == true {
+			// List APIs
 			apis.APIList(config, debug)
-			//listApis()
 		} else if arguments["metrics"] == true {
 			apiID, _ := arguments["<apiId>"].(string)
 			if len(apiID) == 0 {
@@ -281,6 +290,7 @@ Options:
 			// if <method>
 			//apiMetricsForMethod(apiID, method)
 		} else if arguments["logs"] == true {
+			// APIs Logs
 			apiID, _ := arguments["<apiId>"].(string)
 			if len(apiID) == 0 {
 				fmt.Println("Unable to determine API ID.")
@@ -291,6 +301,32 @@ Options:
 				log.Println(err.Error())
 				os.Exit(1)
 			}
+		} else if arguments["add"] == true {
+			// Add
+			// must have a name
+			apiName := arguments["<apiName>"].(string)
+			if apiName == "" {
+				fmt.Println("Please provide a name for the API")
+				os.Exit(1)
+			}
+			from, _ := arguments["<serviceID>"].(string)
+			spec, _ := arguments["<spec>"].(string)
+			endpoint, _ := arguments["<endpoint>"].(string)
+			if from != "" {
+				// Add from existing
+				apis.AddAPIfromExistingService(apiName, from, config, debug)
+			} else if spec != "" {
+				// Add from spec
+				apis.AddAPIwithSpec(apiName, spec, config, debug)
+			} else {
+				// Add name only
+				if endpoint != "" {
+					apis.AddNameOnlyWithEndpoint(apiName, endpoint, config, debug)
+				} else {
+					apis.AddAPINameOnly(apiName, config, debug)
+				}
+			}
+
 		}
 	} else if arguments["cms"] == true {
 		// CMS

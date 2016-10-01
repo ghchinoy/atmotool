@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.7.0 20161001
+* Add API variations and related CMS additions and refactoring
+
 ### 1.6.1 20160928
 * `version` as a non-flag cmd added
 
