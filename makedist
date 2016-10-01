@@ -5,7 +5,7 @@
 # No need to change anything below ####
 # 
 
-VERSION=1.6.0
+VERSION=1.6.1
 
 OSLIST=(linux darwin windows)
 ARCHLIST=(amd64 386)
@@ -30,3 +30,8 @@ for os in ${OSLIST[*]}; do
     file ${OUTPUTFILE}
   done
 done
+# for homebrew distribution, rename darwin.amd64, gz, shasum
+mv ${DISTDIR}/atmotool-${VERSION}-darwin.amd64 ${DISTDIR}/atmotool
+cd ${DISTDIR}
+tar -czf atmotool-${VERSION}.tar.gz atmotool
+shasum -a 256 atmotool-${VERSION}.tar.gz

@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.6.1 20160928
+* `version` as a non-flag cmd added
+
 ### 1.6.0 20160926
 * initial refactor of command structure (ex. `apis list`), while keeping old one (ex. `list apis`)
 * added `apis list`, `apis metrics <apiID>`, `apis logs <apiID>`

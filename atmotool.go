@@ -158,6 +158,7 @@ Usage:
   atmotool reset [<theme>] [--config <config>] [--debug]
   atmotool -h | --help
   atmotool --version
+  atmotool version
 
 Options:
   -h --help  Show help message and exit.
@@ -212,6 +213,10 @@ Options:
 			path, _ := arguments["--path"].(string)
 			upload(files, config, path)
 		}
+	} else if arguments["version"] == true {
+		fmt.Println(version.Version())
+		os.Exit(0)
+
 	} else if arguments["zip"] == true {
 		prefix, _ := arguments["<prefix>"].(string)
 		dir, _ := arguments["<dir>"].(string)
