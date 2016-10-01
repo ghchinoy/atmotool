@@ -10,6 +10,10 @@ import (
 // equivalent cURL command, to be used elsewhere.
 func CURLThis(client *http.Client, req *http.Request) string {
 	curl := "curl -v"
+	curl += fmt.Sprintf(" -X %s", req.Method)
+	if req.Method == "POST" {
+		curl += fmt.Sprintf(" --data %s", "[data]")
+	}
 	for _, v := range client.Jar.Cookies(req.URL) {
 		if strings.HasPrefix(v.Name, "Csrf-Token") {
 			curl += fmt.Sprintf(" -H \"X-%s: %s\"", v.Name, v.Value)
