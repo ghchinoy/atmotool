@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/ghchinoy/atmotool/control"
 )
@@ -133,12 +134,21 @@ func postNewAPI(message []byte, config control.Configuration, debug bool) error 
 	req, err := http.NewRequest("POST", url, data)
 	req.Header.Add("Content-Type", "application/vnd.soa.v81+json; charset=UTF-8")
 	req.Header.Add("Accept", "application/vnd.soa.v81+json")
+	req.Header.Add("Host", strings.Trim(config.URL, "https://"))
+	req = control.AddCsrfHeader(req, client)
 	if debug {
 		log.Println("curl command:", control.CURLThis(client, req))
+	}
+	if debug {
+		control.DebugRequestHeader(req)
 	}
 	resp, err := client.Do(req)
 
 	defer resp.Body.Close()
+
+	if debug {
+		control.DebugResponseHeader(resp)
+	}
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -146,7 +156,7 @@ func postNewAPI(message []byte, config control.Configuration, debug bool) error 
 	}
 	if debug {
 		fmt.Printf("%s\n", resp.Status)
-		fmt.Printf("%s", bodyBytes)
+		fmt.Printf("%s\n", bodyBytes)
 	}
 
 	if resp.StatusCode != 200 {
