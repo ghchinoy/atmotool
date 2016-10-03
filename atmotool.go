@@ -148,7 +148,7 @@ Usage:
   atmotool apis list [--config <config>] [--debug]
   atmotool apis metrics <apiId> [--config <config>] [--debug]
   atmotool apis logs <apiId> [--config <config>] [--debug]
-  atmotool apis add <apiName> [--from <serviceID> | --spec <spec>] [--endpoint <endpoint>] [--config <config>] [--debug]
+  atmotool apis create <apiName> [--from <serviceID> | --spec <spec>] [--endpoint <endpoint>] [--config <config>] [--debug]
   atmotool list topapis [--config <config>] [--debug]
   atmotool list apps [--config <config>] [--debug]
   atmotool list users [--config <config>] [--debug]
@@ -301,8 +301,8 @@ Options:
 				log.Println(err.Error())
 				os.Exit(1)
 			}
-		} else if arguments["add"] == true {
-			// Add
+		} else if arguments["create"] == true {
+			// Create
 			// must have a name
 			apiName := arguments["<apiName>"].(string)
 			if apiName == "" {
@@ -569,7 +569,7 @@ func callDeleteURL(client *http.Client, urlStr string) error {
 	//client := &http.Client{}
 	//client.Jar = jar
 	req, err := http.NewRequest("DELETE", urlStr, nil)
-	addCsrfHeader(req, client)
+	control.AddCsrfHeader(req, client)
 	resp, err := client.Do(req)
 	defer resp.Body.Close()
 	//bodyBytes, err := ioutil.ReadAll(resp.Body)
@@ -851,7 +851,7 @@ func uploadFile(client *http.Client, uploadFilePath string, extras map[string]st
 		return uploadStatus, err
 	}
 	request.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-	addCsrfHeader(request, client)
+	control.AddCsrfHeader(request, client)
 
 	// debug
 	if debug {
@@ -937,17 +937,6 @@ func uploadAllHelper(dir string, config control.Configuration) {
 	fmt.Printf("Uploading all in %s to %s\n", dir, config.URL)
 }
 
-// checks to see if cookie jar has Csrf and adds it as a header
-func addCsrfHeader(req *http.Request, client *http.Client) *http.Request {
-	for _, v := range client.Jar.Cookies(req.URL) {
-		if strings.HasPrefix(v.Name, "Csrf-Token") {
-			req.Header.Add("X-"+v.Name, v.Value)
-		}
-	}
-	req.Header.Add("Atmotool", version.Version())
-	return req
-}
-
 // Call CM Rebuild Styles
 func rebuildStyles(theme string) error {
 
@@ -971,7 +960,7 @@ func rebuildStyles(theme string) error {
 	req, _ := http.NewRequest("POST", rebuildStylesURI, bytes.NewBufferString(postdata.Encode()))
 	req.Header.Add("Content-Length", strconv.Itoa(len(postdata.Encode())))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	addCsrfHeader(req, client)
+	control.AddCsrfHeader(req, client)
 	resp, err := client.Do(req)
 
 	data, err := ioutil.ReadAll(resp.Body)
