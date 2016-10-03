@@ -9,6 +9,9 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"os"
+	"strings"
+
+	"github.com/ghchinoy/atmotool/version"
 )
 
 // Configuration provides a simple struct to hold login info
@@ -103,12 +106,40 @@ func LoginToCM(config Configuration, debug bool) (*http.Client, error) {
 
 	// debug
 	if debug {
-		log.Println(">>> DEBUG >>>")
-		for k, v := range resp.Header {
-			log.Printf("%s : %s", k, v)
-		}
-		log.Println("<<< DEBUG <<<")
+		DebugResponseHeader(resp)
 	}
 
 	return client, nil
+}
+
+// AddCsrfHeader checks to see if cookie jar has Csrf and adds it as a header
+func AddCsrfHeader(req *http.Request, client *http.Client) *http.Request {
+	for _, v := range client.Jar.Cookies(req.URL) {
+		if strings.HasPrefix(v.Name, "Csrf-Token") {
+			req.Header.Add("X-"+v.Name, v.Value)
+		}
+	}
+	req.Header.Add("Atmotool", version.Version())
+	return req
+}
+
+// DebugResponseHeader outputs to the log the headers of an http.Response struct
+func DebugResponseHeader(resp *http.Response) {
+
+	log.Println(">>> DEBUG >>>")
+	for k, v := range resp.Header {
+		log.Printf("%s : %s", k, v)
+	}
+	log.Println("<<< DEBUG <<<")
+
+}
+
+func DebugRequestHeader(req *http.Request) {
+
+	log.Println(">>> DEBUG >>>")
+	for k, v := range req.Header {
+		log.Printf("%s : %s", k, v)
+	}
+	log.Println("<<< DEBUG <<<")
+
 }
