@@ -261,7 +261,7 @@ Options:
 
 		log.Println("Rebuilding styles for theme:", theme)
 
-		err = rebuildStyles(theme)
+		err = rebuildStyles(config, theme)
 		if err != nil {
 			log.Println(err)
 		}
@@ -409,12 +409,12 @@ Options:
 		// override from cmdline
 		theme, _ = arguments["<theme>"].(string)
 
-		err = resetCM(theme)
+		err = resetCM(config, theme)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		rebuildStyles(theme)
+		rebuildStyles(config, theme)
 	}
 }
 
@@ -532,7 +532,7 @@ func listCMS(path string, depth int) (int, int, error) {
 
 // resetCM deletes an array of items in a CM
 // content or resource directory
-func resetCM(theme string) error {
+func resetCM(config control.Configuration, theme string) error {
 
 	client, err := control.LoginToCM(config, debug)
 	if err != nil {
@@ -834,7 +834,7 @@ func uploadLessFile(uploadFilePath string, config control.Configuration) {
 	log.Printf("Upload status %v", statusCode)
 
 	if statusCode == 200 {
-		err = rebuildStyles(config.Theme)
+		err = rebuildStyles(config, config.Theme)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -938,7 +938,7 @@ func uploadAllHelper(dir string, config control.Configuration) {
 }
 
 // Call CM Rebuild Styles
-func rebuildStyles(theme string) error {
+func rebuildStyles(config control.Configuration, theme string) error {
 
 	client, err := control.LoginToCM(config, debug)
 	if err != nil {

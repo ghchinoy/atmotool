@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.7.1 20161007
+* fix for reset and rebuild theme
+
 ### 1.7.0 20161001
 * Add API variations and related CMS additions and refactoring
 * explicit method on curl debug output
