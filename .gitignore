@@ -3,10 +3,11 @@ test_*
 testdata
 .DS_Store
 atmotool
-/dist
+dist
 man/*.html
 script
 Makefile
 samples/*.json
 *.tar.gz
 .vscode
+notes
