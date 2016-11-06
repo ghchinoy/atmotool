@@ -115,7 +115,6 @@ func mapMetrics(mc []MetricNameValue) Metric {
 		case "faultCount":
 			m.FaultCount = v.Value
 		}
-
 	}
 	return m
 }
