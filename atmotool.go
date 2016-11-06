@@ -146,6 +146,7 @@ Usage:
   atmotool download --path <path> <filename> [--config <config>] [--debug]
   atmotool list apis [--config <config>] [--debug]
   atmotool apis list [--config <config>] [--debug]
+  atmotool apis listversions [--config <config>] [--debug]
   atmotool apis metrics <apiId> [--config <config>] [--debug]
   atmotool apis logs <apiId> [--config <config>] [--debug]
   atmotool apis create <apiName> [--from <serviceID> | --spec <spec>] [--endpoint <endpoint>] [--config <config>] [--debug]
@@ -259,7 +260,9 @@ Options:
 		// override config from cmdline
 		theme, _ = arguments["<theme>"].(string)
 
-		log.Println("Rebuilding styles for theme:", theme)
+		if debug {
+			log.Println("Rebuilding styles for theme:", theme)
+		}
 
 		err = rebuildStyles(config, theme)
 		if err != nil {
@@ -276,6 +279,8 @@ Options:
 		if arguments["list"] == true {
 			// List APIs
 			apis.APIList(config, debug)
+		} else if arguments["listversions"] == true {
+			apis.APIListVersions(config, debug)
 		} else if arguments["metrics"] == true {
 			apiID, _ := arguments["<apiId>"].(string)
 			if len(apiID) == 0 {
@@ -303,6 +308,7 @@ Options:
 			}
 		} else if arguments["create"] == true {
 			// Create
+			// atmotool apis create APINAME
 			// must have a name
 			apiName := arguments["<apiName>"].(string)
 			if apiName == "" {
@@ -313,17 +319,22 @@ Options:
 			spec, _ := arguments["<spec>"].(string)
 			endpoint, _ := arguments["<endpoint>"].(string)
 			if from != "" {
-				// Add from existing
-				apis.AddAPIfromExistingService(apiName, from, config, debug)
+				// Create from existing service
+				// .. --from APIID
+				apis.CreateAPIfromExistingService(apiName, from, config, debug)
 			} else if spec != "" {
-				// Add from spec
-				apis.AddAPIwithSpec(apiName, spec, config, debug)
+				// Create using a provied spec
+				// --spec SPECFILE
+				// TODO
+				apis.CreateAPIwithSpec(apiName, spec, config, debug)
 			} else {
 				// Add name only
 				if endpoint != "" {
-					apis.AddNameOnlyWithEndpoint(apiName, endpoint, config, debug)
+					// ... --endpoint HTTP
+					apis.CreateAPINameOnlyWithEndpoint(apiName, endpoint, config, debug)
 				} else {
-					apis.AddAPINameOnly(apiName, config, debug)
+					// atmotool apis create APINAME
+					apis.CreateAPINameOnly(apiName, config, debug)
 				}
 			}
 
@@ -432,7 +443,7 @@ func getCMSPath(path string) (cm.ApisResponse, error) {
 		log.Println("Getting content of: ", path)
 	}
 	// GET content path
-	client, err := control.LoginToCM(config, debug)
+	client, _, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return cms, err
@@ -534,7 +545,7 @@ func listCMS(path string, depth int) (int, int, error) {
 // content or resource directory
 func resetCM(config control.Configuration, theme string) error {
 
-	client, err := control.LoginToCM(config, debug)
+	client, _, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return err
@@ -576,7 +587,12 @@ func callDeleteURL(client *http.Client, urlStr string) error {
 	if err != nil {
 		return err
 	}
-	log.Println("Delete:", resp.Status)
+
+	if debug {
+		if resp.StatusCode != 200 {
+			log.Println("Delete:", resp.Status)
+		}
+	}
 
 	return nil
 }
@@ -608,7 +624,7 @@ func listApps() error {
 		log.Println("Listing Apps")
 	}
 
-	client, err := control.LoginToCM(config, debug)
+	client, userinfo, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return err
@@ -638,6 +654,8 @@ func listApps() error {
 
 	var appList Apps
 
+	domainsuffix := strings.Split(userinfo.LoginDomainID, ".")[1]
+
 	for _, v := range apps.Channel.Items {
 		var visibility string
 		cats := v.Category
@@ -646,27 +664,31 @@ func listApps() error {
 				visibility = c.Value
 			}
 		}
+		// Shorten Registered Users visibility
+		if visibility == "com.soa.visibility.registered.users" {
+			visibility = "Registered Users"
+		}
+		// Remove domain suffix from App GUID
+		appguid := strings.Replace(v.Guid.Value, "."+domainsuffix, "", -1)
+
 		appList = append(appList, App{
-			Name: v.Title, ID: v.Guid.Value, Visibility: visibility,
+			Name:        v.Title,
+			ID:          appguid,
+			Visibility:  visibility,
 			Connections: v.Connections,
 			Followers:   v.Followers,
 			Rating:      v.Rating,
 		})
 	}
 	sort.Sort(appList)
-	fmt.Printf("%v apps.\n", len(appList))
-	pattern := "%-45s %-20s %-8s %-3v %-3v %-3v\n"
+	fmt.Printf("%v apps (suffix: %s)\n", len(appList), domainsuffix)
+	// TODO get max length of []App fields and dynamically set the format pattern
+	pattern := "%-36s %-20s %-8s %-3v %-3v %-3v\n"
 	fmt.Printf(pattern, "ID", "Name", "Vis", "Con", "Fol", "Rat")
 	for _, v := range appList {
 		fmt.Printf(pattern, v.ID, v.Name, v.Visibility, v.Connections, v.Followers, v.Rating)
 	}
-	/*
-		jsonBytes, err := json.Marshal(appList)
-		if err != nil {
-			log.Printf("Unable to marshall appList to json")
-		}
-		fmt.Printf("%s", jsonBytes)
-	*/
+
 	return nil
 }
 
@@ -675,7 +697,7 @@ func listUsers() error {
 		log.Println("Listing Users")
 	}
 
-	client, err := control.LoginToCM(config, debug)
+	client, _, err := control.LoginToCM(config, debug)
 	if err != nil {
 		return err
 	}
@@ -726,7 +748,7 @@ func listUsers() error {
 func listTopApis() error {
 	log.Println("Listing Top APIs")
 
-	client, err := control.LoginToCM(config, debug)
+	client, _, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return err
@@ -758,7 +780,7 @@ func listPolicies() error {
 		log.Println("Listing Policies")
 	}
 
-	client, err := control.LoginToCM(config, debug)
+	client, _, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return err
@@ -810,7 +832,7 @@ func listPolicies() error {
 func uploadLessFile(uploadFilePath string, config control.Configuration) {
 	log.Printf("Uploading Less file %s to %s\n", uploadFilePath, config.URL)
 
-	client, err := control.LoginToCM(config, debug)
+	client, _, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return
@@ -831,7 +853,9 @@ func uploadLessFile(uploadFilePath string, config control.Configuration) {
 		log.Fatalf("Issues. %v : %s", statusCode, err)
 	}
 
-	log.Printf("Upload status %v", statusCode)
+	if statusCode != 200 || debug {
+		log.Printf("Upload status %v", statusCode)
+	}
 
 	if statusCode == 200 {
 		err = rebuildStyles(config, config.Theme)
@@ -940,7 +964,7 @@ func uploadAllHelper(dir string, config control.Configuration) {
 // Call CM Rebuild Styles
 func rebuildStyles(config control.Configuration, theme string) error {
 
-	client, err := control.LoginToCM(config, debug)
+	client, _, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return err
@@ -986,7 +1010,7 @@ func rebuildStyles(config control.Configuration, theme string) error {
 func download(path string, outputFilename string) {
 	fmt.Printf("Downloading CMS path %s to file %s\n", path, outputFilename)
 
-	client, err := control.LoginToCM(config, debug)
+	client, _, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return
@@ -1030,13 +1054,12 @@ func download(path string, outputFilename string) {
 }
 
 // basic upload to CMS
-// TODO review this - http client created but not used?
 func upload(files []string, config control.Configuration, path string) {
-	fmt.Printf("Uploading to %s cms location %s these: %s\n", config.URL, path, files)
+	log.Printf("Uploading to %s cms location %s these: %s\n", config.URL, path, files)
 	// upload FILE to CMS path PATH
 	// iterate through []FILE
 
-	client, err := control.LoginToCM(config, debug)
+	client, _, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return
@@ -1049,7 +1072,9 @@ func upload(files []string, config control.Configuration, path string) {
 	}
 
 	for _, v := range files {
-		log.Printf("Uploading %s ...\n", v)
+		if debug {
+			log.Printf("Uploading %s ...\n", v)
+		}
 		if strings.HasSuffix(v, ".zip") {
 			uploadURI += "?unpack=true"
 		}
@@ -1058,6 +1083,8 @@ func upload(files []string, config control.Configuration, path string) {
 		if err != nil {
 			log.Fatalf("Issues. %v : %s", statusCode, err)
 		}
-		log.Printf("Upload status %v", statusCode)
+		if statusCode != 200 || debug {
+			log.Printf("Upload status %v", statusCode)
+		}
 	}
 }
