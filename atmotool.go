@@ -150,6 +150,7 @@ Usage:
   atmotool apis metrics <apiId> [--config <config>] [--debug]
   atmotool apis logs <apiId> [--config <config>] [--debug]
   atmotool apis create <apiName> [--from <serviceID> | --spec <spec>] [--endpoint <endpoint>] [--config <config>] [--debug]
+  atmotool apis details <apiID> [--config <config>] [--debug]
   atmotool list topapis [--config <config>] [--debug]
   atmotool list apps [--config <config>] [--debug]
   atmotool list users [--config <config>] [--debug]
