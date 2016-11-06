@@ -1,5 +1,11 @@
 # Changelog
 
+### 1.7.3 20161106
+* Create API with OAI spec file, proxy pattern
+
+### 1.7.2 20161104
+* removing some debug statements from output when debug flag was not set
+
 ### 1.7.1 20161007
 * fix for reset and rebuild theme
 

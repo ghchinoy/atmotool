@@ -1,7 +1,7 @@
 package version
 
 const (
-	version     = "1.7.1"
+	version     = "1.7.3"
 	versionName = "cirrus"
 )
 
