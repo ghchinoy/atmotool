@@ -31,8 +31,9 @@ const (
 // API is a convenience structure for a CM API
 type API struct {
 	Name       string `json:"name"`
-	Version    string `json:"version"`
 	ID         string `json:"id"`
+	Version    string `json:"version"`
+	VersionID  string `json:"vid"`
 	Endpoint   string `json:"endpoint"`
 	Visibility string `json:"visibility"`
 }
@@ -183,21 +184,30 @@ func APIList(config control.Configuration, debug bool) error {
 		}
 		visibility := getVisibility(v)
 		// remove that tenant suffix from API guid
-		apiguid := strings.Replace(v.EntityReference.Guid, "."+tenantID, "", -1)
+		apiguid := strings.Replace(v.Guid.Value, "."+tenantID, "", -1)
+		versionguid := strings.Replace(v.EntityReference.Guid, "."+tenantID, "", -1)
+		latestversion := strings.Replace(v.EntityReference.Title, v.Title, "", -1)
+		latestversion = strings.Replace(latestversion, "(", "", -1)
+		latestversion = strings.Replace(latestversion, ")", "", -1)
+		latestversion = strings.TrimSpace(latestversion)
 		apiList = append(apiList, API{
-			Name:       v.EntityReference.Title,
+			Name:       v.Title,
+			Version:    latestversion,
 			ID:         apiguid,
 			Visibility: visibility,
+			VersionID:  versionguid,
 		})
 	}
 
 	sort.Sort(apiList)
-	pattern := fmt.Sprintf("%%-%vs %%-%vs\n",
-		maxLengthOfField(apiList, "Name")+1,
-		maxLengthOfField(apiList, "ID")+1)
-	fmt.Printf(pattern, fmt.Sprintf("ID (%s)", tenantID), "Name")
+	pattern := fmt.Sprintf("%%-%vs %%-%vs %%-%vs %%-%vs\n",
+		maxLengthOfField(apiList, "ID"),
+		maxLengthOfField(apiList, "Name"),
+		maxLengthOfField(apiList, "Version"),
+		maxLengthOfField(apiList, "VersionID"))
+	fmt.Printf(pattern, fmt.Sprintf("ID (%s)", tenantID), "Name", "Ver", "Ver ID")
 	for _, v := range apiList {
-		fmt.Printf(pattern, v.ID, v.Name)
+		fmt.Printf(pattern, v.ID, v.Name, v.Version, v.VersionID)
 	}
 
 	return nil
