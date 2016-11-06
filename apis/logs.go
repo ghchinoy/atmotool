@@ -23,7 +23,7 @@ func APILogs(apiID string, config control.Configuration, debug bool) error {
 		log.Printf("Endpoint: %s", url)
 	}
 
-	client, err := control.LoginToCM(config, debug)
+	client, _, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return err

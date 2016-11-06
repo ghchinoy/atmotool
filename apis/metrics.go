@@ -58,7 +58,7 @@ func APIMetrics(apiID string, config control.Configuration, debug bool) error {
 	endpoint := fmt.Sprintf(GetMetricsFormat, apiID)
 	url := fmt.Sprintf("%s%s", config.URL, endpoint)
 
-	client, err := control.LoginToCM(config, debug)
+	client, _, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
 		return err
