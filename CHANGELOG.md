@@ -2,6 +2,8 @@
 
 ### 1.7.3 20161106
 * Create API with OAI spec file, proxy pattern
+* Updated control login to return userinfo; updated various methods to use new return info
+* API listings (list listversions) have initial dynamic table display
 
 ### 1.7.2 20161104
 * removing some debug statements from output when debug flag was not set
