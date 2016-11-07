@@ -97,3 +97,49 @@ type DeploymentZoneEndpoint struct {
 	Public           bool
 	URL              string `json:"Url"`
 }
+
+// APICreatedResponse is the information that comes back from a successfully created API
+type APICreatedResponse struct {
+	APIID           string
+	Name            string
+	Description     string
+	Visibility      string
+	LatestVersionID string
+	RatingSummary   RatingSummary
+	APIVersion      APIVersion
+	AdminGroupID    string
+	Created         string
+	Updated         string
+}
+
+// RatingSummary holds a summary of ratings for an API
+type RatingSummary struct {
+	One   int
+	Two   int
+	Three int
+	Four  int
+	Five  int
+}
+
+// APIVersion contains information about a version of an API
+type APIVersion struct {
+	APIVersionID                         string
+	APIID                                string
+	Name                                 string
+	Description                          string
+	Envirionment                         string
+	Visibility                           string
+	Created                              string
+	Updated                              string
+	State                                string
+	ProductionEndpointAccessAutoApproved bool
+	SandboxEndpointAccessAutoApproved    bool
+	RatingSummary                        RatingSummary
+	SandboxAnonymousAccessAllowed        bool
+	ProductionAnonymousAccessAllowed     bool
+	ResourceLevelPermissionsSupported    bool
+	APIOwnedImplementations              bool
+	APIDesign                            struct {
+		CommonDesign bool
+	}
+}

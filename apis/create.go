@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/ghchinoy/atmotool/cm"
 	"github.com/ghchinoy/atmotool/control"
 	"github.com/ghchinoy/atmotool/dropbox"
 )
@@ -55,6 +56,7 @@ type APIwithSpec struct {
 	DLDescriptor SDR
 }
 
+// SDR is a placeholder for ServiceDescriptorReference, used with DLDescriptor, in adding an API with spec doc
 type SDR struct {
 	ServiceDescriptorReference ServiceDescriptorReference
 }
@@ -90,24 +92,25 @@ func CreateAPIwithSpec(name string, specpath string, config control.Configuratio
 		log.Println(err.Error())
 		return err
 	}
-
+	// then, create a request with that info
 	specref := ServiceDescriptorReference{
 		ServiceName:  specresponse.ServiceDescriptorDocument[0].ServiceName[0],
 		FileName:     specresponse.FileName,
 		DropoxFileID: specresponse.DropboxFileID,
 	}
 	spec := APIwithSpec{DLDescriptor: SDR{ServiceDescriptorReference: specref}}
-
 	bytes, _ := json.Marshal(spec)
 	if debug {
 		log.Println(string(bytes))
 	}
-	err = postNewAPI(bytes, config, debug)
+	var apiinfo cm.APICreatedResponse
+	// finally create the api
+	apiinfo, err = postNewAPI(bytes, config, debug)
 	if err != nil {
 		log.Println(err.Error())
 		return err
 	}
-	//fmt.Printf("Document ID: %v", specresponse.DropboxFileID)
+	printCreatedAPIInfo(apiinfo)
 
 	return nil
 }
@@ -123,11 +126,12 @@ func CreateAPINameOnly(name string, config control.Configuration, debug bool) er
 	if debug {
 		log.Println(string(bytes))
 	}
-	err := postNewAPI(bytes, config, debug)
+	apiinfo, err := postNewAPI(bytes, config, debug)
 	if err != nil {
 		log.Println(err.Error())
 		return err
 	}
+	printCreatedAPIInfo(apiinfo)
 	return nil
 }
 
@@ -152,20 +156,45 @@ func CreateAPINameOnlyWithEndpoint(name string, endpoint string, config control.
 	if debug {
 		log.Println(string(bytes))
 	}
-	err := postNewAPI(bytes, config, debug)
+	apiinfo, err := postNewAPI(bytes, config, debug)
 	if err != nil {
 		log.Println(err.Error())
 		return err
 	}
+	printCreatedAPIInfo(apiinfo)
 	return nil
 }
 
-func postNewAPI(message []byte, config control.Configuration, debug bool) error {
+func printCreatedAPIInfo(api cm.APICreatedResponse) {
+	var vernamelen int
+	if len(api.APIVersion.Name) < 3 {
+		vernamelen = 3
+	} else {
+		vernamelen = len(api.APIVersion.Name)
+	}
+	pattern := fmt.Sprintf("%%-%vs %%-%vs %%-%vs %%-%vs %%-%vs\n",
+		len(api.APIID),
+		len(api.Name),
+		vernamelen,
+		len(api.APIVersion.Visibility),
+		len(api.APIVersion.APIVersionID))
+	fmt.Printf(pattern, "ID", "Name", "Ver", "Vis", "Version ID")
+	fmt.Printf(pattern,
+		api.APIID,
+		api.Name,
+		api.APIVersion.Name,
+		api.APIVersion.Visibility,
+		api.APIVersion.APIVersionID)
+}
+
+func postNewAPI(message []byte, config control.Configuration, debug bool) (cm.APICreatedResponse, error) {
+
+	var apiinfo cm.APICreatedResponse
 
 	client, _, err := control.LoginToCM(config, debug)
 	if err != nil {
 		log.Fatalln(err)
-		return err
+		return apiinfo, err
 	}
 
 	url := config.URL + CMAddAPIURI
@@ -193,7 +222,7 @@ func postNewAPI(message []byte, config control.Configuration, debug bool) error 
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return apiinfo, err
 	}
 	if debug {
 		fmt.Printf("%s\n", resp.Status)
@@ -206,5 +235,11 @@ func postNewAPI(message []byte, config control.Configuration, debug bool) error 
 		fmt.Println("API Created ok")
 	}
 
-	return nil
+	err = json.Unmarshal(bodyBytes, &apiinfo)
+	if err != nil {
+		fmt.Println("Can't turn response into an API Info struct")
+		return apiinfo, err
+	}
+
+	return apiinfo, nil
 }
