@@ -19,6 +19,7 @@ import (
 	"github.com/ghchinoy/atmotool/apis"
 	"github.com/ghchinoy/atmotool/cm"
 	"github.com/ghchinoy/atmotool/control"
+	"github.com/ghchinoy/atmotool/users"
 	"github.com/ghchinoy/atmotool/version"
 	"github.com/ghchinoy/atmotool/zip"
 	"github.com/ryanuber/columnize"
@@ -154,6 +155,7 @@ Usage:
   atmotool list topapis [--config <config>] [--debug]
   atmotool list apps [--config <config>] [--debug]
   atmotool list users [--config <config>] [--debug]
+  atmotool users delete <userlist> [--config <config>] [--debug]
   atmotool list policies [--config <config>] [--debug]
   atmotool list cms [<path>] [--config <config>] [--debug]
   atmotool cms list [<path>] [--config <config>] [--debug]
@@ -340,6 +342,7 @@ Options:
 			}
 
 		}
+
 	} else if arguments["cms"] == true {
 		// CMS
 		configLocation, _ := arguments["--config"].(string)
@@ -427,7 +430,27 @@ Options:
 			os.Exit(1)
 		}
 		rebuildStyles(config, theme)
+	} else if arguments["users"] == true {
+		configLocation, _ := arguments["--config"].(string)
+		var err error
+		config, err = control.InitializeConfiguration(configLocation, debug)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		userlist, _ := arguments["<userlist>"].(string)
+		if len(userlist) == 0 {
+			fmt.Println("Userlist must exist and may be comma separated")
+			os.Exit(1)
+		}
+		userarray := strings.Split(userlist, ",")
+		err = users.DeleteUserList(userarray, config, debug)
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(1)
+		}
 	}
+
 }
 
 // listTopLevelCMS is a convenience method to call listCMS for /content and /resources
@@ -722,6 +745,7 @@ func listUsers() error {
 	err = json.Unmarshal(bodyBytes, &apis)
 	if debug {
 		log.Printf("Found %v Users", len(apis.Channel.Items))
+		fmt.Printf("%s", bodyBytes)
 	}
 	var userList Users
 
