@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.7.4 20161107
+* Create API methods now have better result output
+* Delete users method added
+
 ### 1.7.3 20161106
 * Create API with OAI spec file, proxy pattern
 * Updated control login to return userinfo; updated various methods to use new return info
