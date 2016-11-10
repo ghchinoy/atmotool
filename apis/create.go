@@ -101,6 +101,7 @@ func CreateAPIwithSpec(name string, specpath string, config control.Configuratio
 	spec := APIwithSpec{DLDescriptor: SDR{ServiceDescriptorReference: specref}}
 	bytes, _ := json.Marshal(spec)
 	if debug {
+		log.Println("Message:")
 		log.Println(string(bytes))
 	}
 	var apiinfo cm.APICreatedResponse
@@ -124,6 +125,7 @@ func CreateAPINameOnly(name string, config control.Configuration, debug bool) er
 	nameonly := NameOnlyAPI{APIVersionInfo: NameValue{name}, AddAPIImplementationRequest: CreateMechanism{"PROXY"}}
 	bytes, _ := json.Marshal(nameonly)
 	if debug {
+		log.Println("Message:")
 		log.Println(string(bytes))
 	}
 	apiinfo, err := postNewAPI(bytes, config, debug)
@@ -154,6 +156,7 @@ func CreateAPINameOnlyWithEndpoint(name string, endpoint string, config control.
 
 	bytes, _ := json.Marshal(nameendpoint)
 	if debug {
+		log.Println("Message:")
 		log.Println(string(bytes))
 	}
 	apiinfo, err := postNewAPI(bytes, config, debug)

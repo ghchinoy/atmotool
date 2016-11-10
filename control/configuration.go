@@ -204,17 +204,22 @@ func DebugResponseHeader(resp *http.Response) {
 
 	log.Println(">>> DEBUG >>>")
 	for k, v := range resp.Header {
-		log.Printf("%s : %s", k, v)
+		for _, h := range v {
+			log.Printf("%s : %s", k, h)
+		}
 	}
 	log.Println("<<< DEBUG <<<")
 
 }
 
+// DebugRequestHeader outputs headers of an http.Request struct to the log
 func DebugRequestHeader(req *http.Request) {
 
 	log.Println(">>> DEBUG >>>")
 	for k, v := range req.Header {
-		log.Printf("%s : %s", k, v)
+		for _, h := range v {
+			log.Printf("%s : %s", k, h)
+		}
 	}
 	log.Println("<<< DEBUG <<<")
 
