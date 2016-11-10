@@ -21,7 +21,7 @@ import (
 
 const (
 	// DropboxReadFileDetailsURI is the endpoint for reading a files details
-	DropboxReadFileDetailsURI = "/api/dropbox/readfiledetails?wrapInHTML=true&document.domain="
+	DropboxReadFileDetailsURI = "/api/dropbox/readfiledetails?wrapInHTML=false&document.domain="
 	// DropboxReadURLURI is the endpoint for information for a file located at a URL
 	DropboxReadURLURI = "/api/dropbox/readurl"
 	// DropboxReadWSDLURI is the endpoint for reading a WSDL's details
@@ -72,10 +72,9 @@ func AddSpecToDropbox(config control.Configuration, specfilepath string, debug b
 	control.AddCsrfHeader(req, client)
 
 	if debug {
+		log.Println("POST to", url)
 		log.Println("* URL", url)
-		for k, v := range req.Header {
-			log.Printf("* %s: %s", k, v)
-		}
+		control.DebugRequestHeader(req)
 	}
 
 	// do the request
@@ -102,9 +101,8 @@ func AddSpecToDropbox(config control.Configuration, specfilepath string, debug b
 	}
 	// if debug, show headers and contents
 	if debug {
-		for k, v := range resp.Header {
-			log.Printf("* %s : %s", k, v)
-		}
+		log.Println("Response")
+		control.DebugResponseHeader(resp)
 		log.Printf("%s", b)
 	}
 
@@ -205,7 +203,7 @@ func ReadURL(config control.Configuration, debug bool) error {
 	return nil
 }
 
-// ReadWSDLzip
+// ReadWSDLzip is a stub
 func ReadWSDLzip(config control.Configuration, debug bool) error {
 	return nil
 }
