@@ -1,5 +1,11 @@
 # Changelog
 
+### 1.7.6
+* API details, basic info
+
+### 1.7.5
+* policies list and list policies; refactor in process
+
 ### 1.7.4 20161107
 * Create API methods now have better result output
 * Delete users method added

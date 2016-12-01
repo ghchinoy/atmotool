@@ -1,8 +1,12 @@
 package cm
 
+import "time"
+
 // ApisResponse is the main struct for the RSS feed
 type ApisResponse struct {
-	Channel Channel `json:"channel"`
+	Channel      Channel `json:"channel"`
+	FaultCode    string  `json:"faultcode"`
+	FaultMessage string  `json:"faultstring"`
 }
 
 // Channel is the container for items
@@ -105,11 +109,13 @@ type APICreatedResponse struct {
 	Description     string
 	Visibility      string
 	LatestVersionID string
+	IsFollowed      bool
 	RatingSummary   RatingSummary
 	APIVersion      APIVersion
 	AdminGroupID    string
 	Created         string
 	Updated         string
+	AvatarURL       string
 }
 
 // RatingSummary holds a summary of ratings for an API
@@ -123,23 +129,75 @@ type RatingSummary struct {
 
 // APIVersion contains information about a version of an API
 type APIVersion struct {
-	APIVersionID                         string
-	APIID                                string
-	Name                                 string
-	Description                          string
-	Envirionment                         string
-	Visibility                           string
-	Created                              string
-	Updated                              string
-	State                                string
-	ProductionEndpointAccessAutoApproved bool
-	SandboxEndpointAccessAutoApproved    bool
+	APIVersionID       string        `json:"APIVersionID"`
+	APIID              string        `json:"APIID"`
+	Name               string        `json:"Name"`
+	Description        string        `json:"Description"`
+	Tag                []interface{} `json:"Tag"`
+	ProductionEndpoint string        `json:"ProductionEndpoint"`
+	Endpoints          struct {
+		Endpoint []struct {
+			CName                string `json:"CName"`
+			Category             string `json:"Category"`
+			URI                  string `json:"Uri"`
+			DeploymentZoneRule   string `json:"DeploymentZoneRule"`
+			ConnectionProperties []struct {
+				Name  string `json:"Name"`
+				Value string `json:"Value"`
+			} `json:"ConnectionProperties"`
+			BindingQName                  string `json:"BindingQName"`
+			BindingType                   string `json:"BindingType"`
+			EndpointKey                   string `json:"EndpointKey"`
+			EndpointImplementationDetails struct {
+				DeploymentZoneEndpoint struct {
+					DeploymentZoneID string `json:"DeploymentZoneID"`
+					EndpointKey      string `json:"EndpointKey"`
+					ListenerName     string `json:"ListenerName"`
+					ContainerKey     string `json:"ContainerKey"`
+					GatewayHostName  string `json:"GatewayHostName"`
+					GatewayHostPath  string `json:"GatewayHostPath"`
+					EndpointHostName string `json:"EndpointHostName"`
+					EndpointPath     string `json:"EndpointPath"`
+					Protocol         string `json:"Protocol"`
+					Path             string `json:"Path"`
+					URL              string `json:"Url"`
+					BindingQName     string `json:"BindingQName"`
+					BindingType      string `json:"BindingType"`
+					Public           bool   `json:"Public"`
+				} `json:"DeploymentZoneEndpoint"`
+			} `json:"EndpointImplementationDetails"`
+			ImplementationCode string `json:"ImplementationCode"`
+		} `json:"Endpoint"`
+	} `json:"Endpoints"`
+	Visibility                           string    `json:"Visibility"`
+	Created                              time.Time `json:"Created"`
+	Updated                              time.Time `json:"Updated"`
+	State                                string    `json:"State"`
+	ProductionEndpointAccessAutoApproved bool      `json:"ProductionEndpointAccessAutoApproved"`
+	SandboxEndpointAccessAutoApproved    bool      `json:"SandboxEndpointAccessAutoApproved"`
 	RatingSummary                        RatingSummary
-	SandboxAnonymousAccessAllowed        bool
-	ProductionAnonymousAccessAllowed     bool
-	ResourceLevelPermissionsSupported    bool
-	APIOwnedImplementations              bool
+	SandboxAnonymousAccessAllowed        bool   `json:"SandboxAnonymousAccessAllowed"`
+	ProductionAnonymousAccessAllowed     bool   `json:"ProductionAnonymousAccessAllowed"`
+	ResourceLevelPermissionsSupported    bool   `json:"ResourceLevelPermissionsSupported"`
+	APIOwnedImplementations              bool   `json:"APIOwnedImplementations"`
+	ProductionServiceKey                 string `json:"ProductionServiceKey"`
 	APIDesign                            struct {
 		CommonDesign bool
 	}
+}
+
+// APIDetails is the response to an API details request
+type APIDetails struct {
+	APIID           string `json:"APIID"`
+	Name            string `json:"Name"`
+	Description     string `json:"Description"`
+	Visibility      string `json:"Visibility"`
+	LatestVersionID string `json:"LatestVersionID"`
+	IsFollowed      bool   `json:"IsFollowed"`
+	RatingSummary   RatingSummary
+	APIVersion      APIVersion
+	AdminGroupID    string    `json:"AdminGroupID"`
+	Created         time.Time `json:"Created"`
+	Updated         time.Time `json:"Updated"`
+	AvatarURL       string    `json:"AvatarURL"`
 }

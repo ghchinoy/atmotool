@@ -19,6 +19,7 @@ import (
 	"github.com/ghchinoy/atmotool/apis"
 	"github.com/ghchinoy/atmotool/cm"
 	"github.com/ghchinoy/atmotool/control"
+	"github.com/ghchinoy/atmotool/policies"
 	"github.com/ghchinoy/atmotool/users"
 	"github.com/ghchinoy/atmotool/version"
 	"github.com/ghchinoy/atmotool/zip"
@@ -123,10 +124,9 @@ const (
 	CMCustomLess           = "/less/custom.less"
 	CMFavicon              = "/style/images/favicon.ico"
 	// CMCustomLessURI should be a template, subsitute in Configuration.Theme
-	CMCustomLessURI   = "/resources/theme/default/less?unpack=false"
-	CMListAppsURI     = "/api/search?sortBy=com.soa.sort.order.alphabetical&count=20&start=0&q=type:app"
-	CMListPoliciesURI = "/api/policies"
-	CMListUsersURI    = "/api/search?sort=asc&sortBy=com.soa.sort.order.title_sort&Federation=false&count=20&start=0&q=type:user"
+	CMCustomLessURI = "/resources/theme/default/less?unpack=false"
+	CMListAppsURI   = "/api/search?sortBy=com.soa.sort.order.alphabetical&count=20&start=0&q=type:app"
+	CMListUsersURI  = "/api/search?sort=asc&sortBy=com.soa.sort.order.title_sort&Federation=false&count=20&start=0&q=type:user"
 )
 
 var (
@@ -151,7 +151,8 @@ Usage:
   atmotool apis metrics <apiId> [--config <config>] [--debug]
   atmotool apis logs <apiId> [--config <config>] [--debug]
   atmotool apis create <apiName> [--from <serviceID> | --spec <spec>] [--endpoint <endpoint>] [--config <config>] [--debug]
-  atmotool apis details <apiID> [--config <config>] [--debug]
+  atmotool apis details <apiID> [--ver] [--config <config>] [--debug]
+  atmotool policies list [--types <types>] [--config <config>] [--debug]
   atmotool list topapis [--config <config>] [--debug]
   atmotool list apps [--config <config>] [--debug]
   atmotool list users [--config <config>] [--debug]
@@ -223,10 +224,6 @@ Options:
 			path, _ := arguments["--path"].(string)
 			upload(files, config, path)
 		}
-	} else if arguments["version"] == true {
-		// Version
-		fmt.Println(version.Version())
-		os.Exit(0)
 
 	} else if arguments["zip"] == true {
 		// Zip
@@ -341,6 +338,19 @@ Options:
 				}
 			}
 
+		} else if arguments["details"] == true {
+			// Details of an API
+			apiID, _ := arguments["<apiID>"].(string)
+			if apiID == "" {
+				fmt.Println("Please provide an API ID")
+				os.Exit(1)
+			}
+			useVersion, _ := arguments["--ver"].(bool)
+			if err := apis.ShowDetailsforAPIID(apiID, useVersion, config, debug); err != nil {
+				fmt.Println(err.Error())
+				os.Exit(1)
+			}
+
 		}
 
 	} else if arguments["cms"] == true {
@@ -361,6 +371,21 @@ Options:
 				listCMS(path, 0)
 			}
 		}
+
+	} else if arguments["policies"] == true {
+		configLocation, _ := arguments["--config"].(string)
+		var err error
+		config, err = control.InitializeConfiguration(configLocation, debug)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		policytypes, ok := arguments["<types>"].(string)
+		if !ok {
+			policytypes = "all"
+		}
+		policies.ListPolicies(policytypes, config, debug)
+
 	} else if arguments["list"] == true {
 		// List policies
 		// List APIs
@@ -373,7 +398,12 @@ Options:
 		}
 
 		if arguments["policies"] == true {
-			listPolicies()
+
+			policytypes, ok := arguments["<types>"].(string)
+			if !ok {
+				policytypes = "all"
+			}
+			policies.ListPolicies(policytypes, config, debug)
 		} else if arguments["apis"] == true {
 			//listApis()
 			apis.APIList(config, debug)
@@ -392,6 +422,7 @@ Options:
 				listCMS(path, 0)
 			}
 		}
+
 	} else if arguments["download"] == true {
 		// Download path as filename.zip
 		configLocation, _ := arguments["--config"].(string)
@@ -408,6 +439,7 @@ Options:
 			outputFilename += ".zip"
 		}
 		download(path, outputFilename)
+
 	} else if arguments["reset"] == true {
 		configLocation, _ := arguments["--config"].(string)
 		config, err := control.InitializeConfiguration(configLocation, debug)
@@ -430,6 +462,7 @@ Options:
 			os.Exit(1)
 		}
 		rebuildStyles(config, theme)
+
 	} else if arguments["users"] == true {
 		configLocation, _ := arguments["--config"].(string)
 		var err error
@@ -449,6 +482,11 @@ Options:
 			fmt.Println(err.Error())
 			os.Exit(1)
 		}
+
+	} else if arguments["version"] == true {
+		// Version
+		fmt.Println(version.Version())
+		os.Exit(0)
 	}
 
 }
@@ -795,60 +833,6 @@ func listTopApis() error {
 		return err
 	}
 	fmt.Printf("%s", bodyBytes)
-	return nil
-}
-
-// incomplete - list raw json of policies
-// should show a more human readable output
-func listPolicies() error {
-	if debug {
-		log.Println("Listing Policies")
-	}
-
-	client, _, err := control.LoginToCM(config, debug)
-	if err != nil {
-		log.Fatalln(err)
-		return err
-	}
-
-	policyTypes := []string{"Operational Policy", "Denial of Service", "Compliance Policy", "Service Level Policy"}
-
-	for _, policyType := range policyTypes {
-		if debug {
-			log.Printf("%s\n", policyType)
-		}
-		url := config.URL + CMListPoliciesURI + "?Type=" + url.QueryEscape(policyType)
-		//log.Printf("* %s\n", url)
-
-		//client := &http.Client{}
-		req, err := http.NewRequest("GET", url, nil)
-		req.Header.Add("Accept", "application/json")
-		resp, err := client.Do(req)
-
-		defer resp.Body.Close()
-
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-		var policies cm.ApisResponse
-		err = json.Unmarshal(bodyBytes, &policies)
-		if debug {
-			log.Println("Found", len(policies.Channel.Items), " policies.")
-		}
-
-		fmt.Printf("%v %s Policies.\n", len(policies.Channel.Items), policyType)
-		fmt.Println("---------------------------------")
-
-		if len(policies.Channel.Items) > 1 {
-			//log.Printf("%s", bodyBytes)
-			for _, v := range policies.Channel.Items {
-				fmt.Printf("%-45s %s\n", v.Guid.Value, v.Title)
-			}
-		}
-
-	}
-
 	return nil
 }
 
