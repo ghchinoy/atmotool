@@ -114,6 +114,6 @@ func outputAPIVersion(api cm.APIVersion) {
 
 func outputAPI(api cm.APIDetails) {
 
-	fmt.Printf("API: %s (%s)", api.Description, api.APIID)
-	fmt.Printf("Latest version ID: %s", api.LatestVersionID)
+	fmt.Printf("API: %s (%s)\n", api.Description, api.APIID)
+	fmt.Printf("Latest version ID: %s\n", api.LatestVersionID)
 }
