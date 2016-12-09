@@ -75,6 +75,7 @@ func AddSpecToDropbox(config control.Configuration, specfilepath string, debug b
 		log.Println("POST to", url)
 		log.Println("* URL", url)
 		control.DebugRequestHeader(req)
+		log.Println("curl\n", control.CURLThis(client, req))
 	}
 
 	// do the request
