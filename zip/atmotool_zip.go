@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"errors"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -87,7 +86,7 @@ func (z *zipper) zipFile(path string, f os.FileInfo, err error) error {
 	// Exclusions
 	if contains(exclusions, f.Name()) {
 		//if strings.HasSuffix(f.Name(), ".conf") {
-		log.Println("Skipping", f.Name())
+		//log.Println("Skipping", f.Name())
 		return nil
 	}
 
