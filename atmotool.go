@@ -1025,7 +1025,7 @@ func download(path string, outputFilename string) {
 		return
 	}
 
-	downloadUri := config.URL + path + "?download=true&Zip=true"
+	downloadURI := config.URL + path + "?download=true&Zip=true"
 
 	file, err := os.Create(outputFilename)
 	if err != nil {
@@ -1042,13 +1042,13 @@ func download(path string, outputFilename string) {
 			},
 		}
 	*/
-	resp, err := client.Get(downloadUri)
+	resp, err := client.Get(downloadURI)
 	if err != nil {
 		log.Fatalln(err)
 		return
 	}
 	if resp.StatusCode != 200 {
-		log.Fatalln(resp.StatusCode, "Unauthorized access to", downloadUri)
+		log.Fatalln(resp.StatusCode, "Unauthorized access to", downloadURI)
 		return
 	}
 	defer resp.Body.Close()
