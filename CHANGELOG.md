@@ -1,5 +1,9 @@
 # Changelog
 
+### Deprecation Notice 201701
+
+Atmotool is being deprecated and replaced with [rwctl](https://github.com/ghchinoy/rwctl). Atmotool will remain in maintenance until dependent tools are updated (ex. [yeoman theme generator](https://www.npmjs.com/package/generator-akana-theme))
+
 ### 1.7.6
 * API details, basic info
 

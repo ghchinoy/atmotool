@@ -2,6 +2,11 @@
 
 A command-line tool to manage [Akana](https://www.akana.com/)'s [Community Manager API Portal](https://www.akana.com/products/api-portal).
 
+** * Deprecation notice * **
+01/2017
+
+Atmotool is being deprecated and replaced with [rwctl](https://github.com/ghchinoy/rwctl). Atmotool will remain in maintenance until dependent tools are updated (ex. [yeoman theme generator](https://www.npmjs.com/package/generator-akana-theme))
+
 ## Installation
 
 ### Download
